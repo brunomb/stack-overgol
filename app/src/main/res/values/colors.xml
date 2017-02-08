@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#C67700</color>
+    <color name="colorPrimaryDark">#9B5D00</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="splashTittleColor">#000000</color>
+    <color name="stackOvergol">#FF9900</color>
+    <color name="stackOvergolBackGround">#D7D6D6</color>
+
+</resources>
