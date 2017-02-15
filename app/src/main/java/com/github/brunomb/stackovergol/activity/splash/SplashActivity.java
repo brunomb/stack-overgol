@@ -1,4 +1,4 @@
-package com.github.brunomb.stackovergol;
+package com.github.brunomb.stackovergol.activity.splash;
 
 import android.animation.ValueAnimator;
 import android.content.Intent;
@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 
+import com.github.brunomb.stackovergol.R;
+import com.github.brunomb.stackovergol.activity.login.LoginActivity;
 import com.race604.drawable.wave.WaveDrawable;
 
 import butterknife.BindView;
@@ -62,7 +64,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void init() {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();
     }

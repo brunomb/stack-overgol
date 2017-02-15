@@ -3,4 +3,8 @@
     <string name="splash_tv_title">Stack</string>
     <string name="splash_tv_sub_title">Overgol</string>
     <string name="splash_iv_app_icon_cd">Splash Activity Logo</string>
+    <string name="sog_login_et_email">Email</string>
+    <string name="sog_login_id_logo">app logo</string>
+    <string name="sog_login_et_password">Password</string>
+    <string name="sog_login_bt_login">Login</string>
 </resources>
