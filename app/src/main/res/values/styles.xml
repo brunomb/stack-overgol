@@ -8,4 +8,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="MarqueetoEditTextStyle">
+        <item name="baseColor">@color/colorPrimary</item>
+        <item name="highlightColor">@color/black</item>
+        <item name="errorColor">@color/red</item>
+    </style>
+
 </resources>

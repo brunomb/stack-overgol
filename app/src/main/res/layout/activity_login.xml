@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:labelled_marquee="http://schemas.android.com/apk/res-auto"
+    tools:context="com.github.brunomb.stackovergol.activity.login.LoginActivity"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,40 +12,37 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:background="@color/stackOvergolBackGround"
     android:gravity="center"
-    tools:context="com.github.brunomb.stackovergol.activity.login.LoginActivity">
+    android:orientation="vertical">
 
     <ImageView
         android:id="@+id/sog_login_im_logo"
         android:layout_width="160dp"
         android:layout_height="160dp"
         android:src="@mipmap/stack_overgol_icon"
-        android:layout_marginStart="18dp"
         android:contentDescription="@string/sog_login_id_logo" />
 
     <EditText
-        android:id="@+id/sog_login_et_email"
-        android:layout_width="180dp"
-        android:layout_height="wrap_content"
-        android:hint="@string/sog_login_et_email"
-        android:background="@color/loginETBackGround"
-        android:gravity="center_horizontal"
-        android:padding="5dp"
-        android:minWidth="180dp"
-        android:inputType="textEmailAddress"
-        android:layout_below="@id/sog_login_im_logo" />
+        android:layout_width="10dp"
+        android:inputType="numberPassword"
+        android:layout_height="10dp" />
 
-    <EditText
-        android:id="@+id/sog_login_et_password"
-        android:layout_width="180dp"
+    <com.github.guilhermesgb.marqueeto.LabelledMarqueeEditText
+        android:id="@+id/sog_login_et_email"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:hint="@string/sog_login_et_email"
+        labelled_marquee:labelledMarqueeEditTextStyle="@style/MarqueetoEditTextStyle"
+        labelled_marquee:mode="edit"/>
+
+    <com.github.guilhermesgb.marqueeto.LabelledMarqueeEditText
+        android:id="@+id/sog_login_et_password"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberPassword"
         android:hint="@string/sog_login_et_password"
-        android:background="@color/loginETBackGround"
-        android:gravity="center_horizontal"
-        android:padding="5dp"
-        android:minWidth="180dp"
-        android:layout_marginTop="3dp"
-        android:inputType="textPassword"
-        android:layout_below="@id/sog_login_et_email" />
+        labelled_marquee:labelledMarqueeEditTextStyle="@style/MarqueetoEditTextStyle"
+        labelled_marquee:mode="edit"/>
 
     <Button
         android:id="@+id/sog_login_bt_login"
@@ -52,8 +51,6 @@
         android:text="@string/sog_login_bt_login"
         android:background="@color/loginBTBackGround"
         android:textColor="@color/loginBTText"
-        android:layout_marginTop="30dp"
-        android:layout_below="@id/sog_login_et_password" />
+        android:layout_marginTop="21dp" />
 
-
-</RelativeLayout>
+</LinearLayout>

@@ -7,4 +7,7 @@
     <string name="sog_login_id_logo">app logo</string>
     <string name="sog_login_et_password">Password</string>
     <string name="sog_login_bt_login">Login</string>
+    <string name="login_error_title">Error!</string>
+    <string name="login_error_message">Login failed</string>
+    <string name="invalid_password">Invalid password.</string>
 </resources>

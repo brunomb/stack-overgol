@@ -2,12 +2,14 @@
 <resources>
     <color name="colorPrimary">#C67700</color>
     <color name="colorPrimaryDark">#9B5D00</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#000000</color>
     <!-- Splash -->
     <color name="splashTittleColor">#000000</color>
     <!-- General -->
     <color name="stackOvergol">#FF9900</color>
     <color name="stackOvergolBackGround">#D7D6D6</color>
+    <color name="black">#000000</color>
+    <color name="red">#fd0000</color>
     <!-- Login Activity -->
     <color name="loginETBackGround">#FFFFFF</color>
     <color name="loginBTBackGround">#514E4E</color>

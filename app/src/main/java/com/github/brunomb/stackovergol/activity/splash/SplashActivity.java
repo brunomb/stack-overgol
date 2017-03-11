@@ -10,6 +10,10 @@ import android.widget.ImageView;
 
 import com.github.brunomb.stackovergol.R;
 import com.github.brunomb.stackovergol.activity.login.LoginActivity;
+import com.github.brunomb.stackovergol.activity.main.MainActivity;
+import com.github.brunomb.stackovergol.utils.MyLog;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.race604.drawable.wave.WaveDrawable;
 
 import butterknife.BindView;
@@ -18,6 +22,10 @@ import butterknife.ButterKnife;
 public class SplashActivity extends AppCompatActivity {
 
     private static final int THREE_SECONDS = 3000;
+    // Initialize Firebase Auth
+
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
 
     @BindView(R.id.splash_iv_app_icon) ImageView mLogo;
 
@@ -34,7 +42,13 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
+        MyLog.i("SplashActivity - onCreate");
+
         ButterKnife.bind(this);
+
+        // Initialize Firebase Auth
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
@@ -44,7 +58,6 @@ public class SplashActivity extends AppCompatActivity {
 
         mLogo.setImageDrawable(mWaveDrawableLogo);
 
-        mHandler.postDelayed(mHandlerTask, THREE_SECONDS);
 
         ValueAnimator animator = ValueAnimator.ofFloat(0, 1);
         animator.setRepeatMode(ValueAnimator.REVERSE);
@@ -56,6 +69,7 @@ public class SplashActivity extends AppCompatActivity {
         mWaveDrawableLogo.setWaveLength(3);
         mWaveDrawableLogo.setIndeterminate(true);
 
+        mHandler.postDelayed(mHandlerTask, THREE_SECONDS);
     }
 
     @Override
@@ -64,9 +78,17 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void init() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-        finish();
+        if (mFirebaseUser == null) {
+            MyLog.i("SplashActivity - Not logged user, going to Login");
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        } else {
+            MyLog.i("SplashActivity - User logged: " + mFirebaseUser.getDisplayName());
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
 }
