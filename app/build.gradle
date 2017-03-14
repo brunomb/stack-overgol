@@ -25,21 +25,21 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.1.0'
     //Wave loading progress bar
     //https://github.com/race604/WaveLoading/blob/master/sample/src/main/java/com/race604/waveloading/MainActivity.java
-    compile 'com.race604.waveloading:library:1.1.0'
     //ButterKnife
     //http://jakewharton.github.io/butterknife/
-    compile 'com.jakewharton:butterknife:8.4.0'
     //Marqueeto
     //https://github.com/guilhermesgb/marqueeto
-    compile 'com.github.guilhermesgb:marqueeto:1.1.12'
     //FireBase
+    compile 'com.android.support:appcompat-v7:25.1.0'
+    compile 'com.race604.waveloading:library:1.1.0'
+    compile 'com.jakewharton:butterknife:8.4.0'
+    compile 'com.github.guilhermesgb:marqueeto:1.1.12'
     compile 'com.google.firebase:firebase-database:9.4.0'
     compile 'com.google.firebase:firebase-auth:9.4.0'
     compile 'com.google.firebase:firebase-crash:9.4.0'
-
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
 }

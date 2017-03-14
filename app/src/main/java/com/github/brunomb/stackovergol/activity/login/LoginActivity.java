@@ -10,7 +10,7 @@ import android.text.TextWatcher;
 import android.widget.Button;
 
 import com.github.brunomb.stackovergol.R;
-import com.github.brunomb.stackovergol.activity.main.MainActivity;
+import com.github.brunomb.stackovergol.activity.main.MainScreenActivity;
 import com.github.brunomb.stackovergol.utils.MyLog;
 import com.github.brunomb.stackovergol.utils.Validator;
 import com.github.guilhermesgb.marqueeto.LabelledMarqueeEditText;
@@ -64,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            Intent intent = new Intent(LoginActivity.this, MainScreenActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);

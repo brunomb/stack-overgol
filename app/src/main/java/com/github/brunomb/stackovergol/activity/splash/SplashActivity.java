@@ -10,7 +10,7 @@ import android.widget.ImageView;
 
 import com.github.brunomb.stackovergol.R;
 import com.github.brunomb.stackovergol.activity.login.LoginActivity;
-import com.github.brunomb.stackovergol.activity.main.MainActivity;
+import com.github.brunomb.stackovergol.activity.main.MainScreenActivity;
 import com.github.brunomb.stackovergol.utils.MyLog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -85,7 +85,7 @@ public class SplashActivity extends AppCompatActivity {
             finish();
         } else {
             MyLog.i("SplashActivity - User logged: " + mFirebaseUser.getDisplayName());
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, MainScreenActivity.class);
             startActivity(intent);
             finish();
         }

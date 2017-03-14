@@ -10,4 +10,14 @@
     <string name="login_error_title">Error!</string>
     <string name="login_error_message">Login failed</string>
     <string name="invalid_password">Invalid password.</string>
+    <string name="title_activity_main_screen">MainScreen</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_logout">Logout</string>
+    <string name="admin">Administrador</string>
+    <string name="matches">Matches</string>
+    <string name="finances">Finances</string>
+    <string name="monthly">Monthly</string>
 </resources>

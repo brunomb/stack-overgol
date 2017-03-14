@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <!--User icon: flag-->
+        <item
+            android:id="@+id/nav_matches"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="@string/matches" />
+        <!--User icon: monetization on-->
+        <item
+            android:id="@+id/nav_finances"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="@string/finances" />
+        <!--User icon: people-->
+        <item
+            android:id="@+id/nav_monthly"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="@string/monthly" />
+        <!--<item-->
+            <!--android:id="@+id/nav_wait_list"-->
+            <!--android:icon="@drawable/ic_menu_manage"-->
+            <!--android:title="Wait List" />-->
+    </group>
+
+    <!--<item android:title="Communicate">-->
+        <!--<menu>-->
+            <!--<item-->
+                <!--android:id="@+id/nav_share"-->
+                <!--android:icon="@drawable/ic_menu_share"-->
+                <!--android:title="Share" />-->
+            <!--<item-->
+                <!--android:id="@+id/nav_send"-->
+                <!--android:icon="@drawable/ic_menu_send"-->
+                <!--android:title="Send" />-->
+        <!--</menu>-->
+    <!--</item>-->
+
+</menu>
