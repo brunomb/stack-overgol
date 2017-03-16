@@ -1,6 +1,9 @@
 package com.github.brunomb.stackovergol.activity.main;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,15 +18,19 @@ import android.widget.TextView;
 
 import com.github.brunomb.stackovergol.R;
 import com.github.brunomb.stackovergol.activity.login.LoginActivity;
+import com.github.brunomb.stackovergol.activity.matches.MatchesFragment;
 import com.github.brunomb.stackovergol.utils.MyLog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class MainScreenActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, MatchesFragment.OnFragmentInteractionListener {
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
+
+    final String[] fragments ={
+            "com.github.brunomb.stackovergol.activity.matches.MatchesFragment"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +51,8 @@ public class MainScreenActivity extends AppCompatActivity
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
+
+        commitFragment(0);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -108,5 +117,17 @@ public class MainScreenActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void commitFragment(int fragmentCont) {
+        FragmentTransaction tx = getFragmentManager().beginTransaction();
+//        MatchesFragment teste = MatchesFragment.newInstance("teste1","teste2");
+        tx.replace(R.id.main_fragment, Fragment.instantiate(MainScreenActivity.this, fragments[fragmentCont]), fragments[fragmentCont]);
+        tx.commit();
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }
