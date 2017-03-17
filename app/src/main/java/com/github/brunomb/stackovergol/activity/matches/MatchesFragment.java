@@ -4,11 +4,23 @@ import android.app.Fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.github.brunomb.stackovergol.R;
+import com.github.brunomb.stackovergol.adapter.MatchesAdapter;
+import com.github.brunomb.stackovergol.model.Match;
+import com.github.brunomb.stackovergol.utils.MyLog;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,6 +31,12 @@ import com.github.brunomb.stackovergol.R;
  * create an instance of this fragment.
  */
 public class MatchesFragment extends Fragment {
+//    private GridLayoutManager lLayout;
+    private MatchesAdapter adapter;
+
+    private TextView noMatches;
+    private RecyclerView mRecyclerView;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -65,7 +83,13 @@ public class MatchesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_matches, container, false);
+        final View mView = inflater.inflate(R.layout.fragment_matches, container, false);
+        noMatches = (TextView) mView.findViewById(R.id.sog_matches_tv_empty);
+        mRecyclerView = (RecyclerView) mView.findViewById(R.id.sog_matches_rv);
+
+        updateAdapter(mView);
+
+        return mView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -105,5 +129,37 @@ public class MatchesFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private void updateAdapter(View mView) {
+        //TODO REFACTOR
+        List<Match> matches = new ArrayList<>();
+        String date1 = "07,01,17";
+        String date2 = "14,01,17";
+        String date3 = "21,01,17";
+        DateFormat format = new SimpleDateFormat("dd,mm,yy");
+
+        try {
+            matches.add(new Match("Partida comum", format.parse(date1)));
+            matches.add(new Match("Partida comum", format.parse(date2)));
+            matches.add(new Match("Partida comum", format.parse(date3)));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        for (Match m : matches) {
+            MyLog.i(m.getName() + ", " + m.getTimeStamp());
+        }
+
+        if (matches.isEmpty()) {
+            noMatches.setVisibility(View.VISIBLE);
+        } else {
+            noMatches.setVisibility(View.GONE);
+//            lLayout = new GridLayoutManager(mView.getContext(), 2);
+            adapter = new MatchesAdapter(matches);
+            LinearLayoutManager llm = new LinearLayoutManager(mView.getContext());
+            mRecyclerView.setLayoutManager(llm);
+            mRecyclerView.setAdapter(adapter);
+        }
     }
 }

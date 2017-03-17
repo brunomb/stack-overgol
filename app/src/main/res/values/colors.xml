@@ -10,6 +10,7 @@
     <color name="stackOvergolBackGround">#D7D6D6</color>
     <color name="black">#000000</color>
     <color name="red">#fd0000</color>
+    <color name="white">#ffffff</color>
     <!-- Login Activity -->
     <color name="loginETBackGround">#FFFFFF</color>
     <color name="loginBTBackGround">#514E4E</color>
