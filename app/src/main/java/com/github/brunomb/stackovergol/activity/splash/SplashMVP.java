@@ -1,30 +1,26 @@
-package com.github.brunomb.stackovergol.activity.login;
+package com.github.brunomb.stackovergol.activity.splash;
 
 import android.content.ServiceConnection;
 
-import com.github.brunomb.stackovergol.model.StackOvergolError;
-
 /**
- * Created by brunomb on 3/15/2017
+ * Created by brunomb on 3/17/2017
  */
 
-interface LoginMVP {
+public class SplashMVP {
 
     interface ViewOps {
         boolean doBindToStackOvergolService(ServiceConnection connection);
         void doUnbindToStackOvergolService(ServiceConnection connection);
         void stackOvergolServiceConnected();
         void stackOvergolServiceDisconnected();
-        void onLoginSuccessfully();
-        void showLoading();
-        void hideLoading();
-        void showErrorMessage(StackOvergolError error);
+        void userAuthenticated();
+        void userNotAuthenticated();
     }
 
     interface PresenterOps {
         boolean bindToStackOvergolService();
         void unbindFromStackOvergolService();
-        void setView(ViewOps view);
-        void doLogin(String email, String password);
+        void initFireBase();
     }
+
 }

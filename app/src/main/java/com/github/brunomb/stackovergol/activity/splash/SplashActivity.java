@@ -1,7 +1,9 @@
 package com.github.brunomb.stackovergol.activity.splash;
 
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -11,24 +13,19 @@ import android.widget.ImageView;
 import com.github.brunomb.stackovergol.R;
 import com.github.brunomb.stackovergol.activity.login.LoginActivity;
 import com.github.brunomb.stackovergol.activity.main.MainScreenActivity;
-import com.github.brunomb.stackovergol.utils.MyLog;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.github.brunomb.stackovergol.service.StackOvergolService;
 import com.race604.drawable.wave.WaveDrawable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends AppCompatActivity implements SplashMVP.ViewOps {
 
     private static final int THREE_SECONDS = 3000;
-    // Initialize Firebase Auth
 
-    private FirebaseAuth mFirebaseAuth;
-    private FirebaseUser mFirebaseUser;
-
-    @BindView(R.id.splash_iv_app_icon) ImageView mLogo;
-
+    private SplashMVP.PresenterOps mPresenter;
+    private boolean boundToStackOvergolService = false;
+    private boolean isUserAuth = false;
     private Handler mHandler = new Handler();
     private Runnable mHandlerTask = new Runnable() {
         @Override
@@ -37,19 +34,86 @@ public class SplashActivity extends AppCompatActivity {
         }
     };
 
+    @BindView(R.id.splash_iv_app_icon) ImageView mLogo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        MyLog.i("SplashActivity - onCreate");
-
         ButterKnife.bind(this);
+        initViews();
+    }
 
-        // Initialize Firebase Auth
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mPresenter = new SplashActivityPresenter(this);
+        mPresenter.bindToStackOvergolService();
+    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (boundToStackOvergolService) {
+            mPresenter.unbindFromStackOvergolService();
+        }
+    }
+
+//    @Override
+//    protected void onPause() {
+//        if (boundToStackOvergolService) {
+//            mPresenter.unbindFromStackOvergolService();
+//        }
+//        super.onPause();
+//    }
+
+    @Override
+    public boolean doBindToStackOvergolService(ServiceConnection connection) {
+        Intent intent = new Intent(this, StackOvergolService.class);
+        return bindService(intent, connection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    public void doUnbindToStackOvergolService(ServiceConnection connection) {
+        unbindService(connection);
+        boundToStackOvergolService = false;
+    }
+
+    @Override
+    public void stackOvergolServiceConnected() {
+        boundToStackOvergolService = true;
+        mPresenter.initFireBase();
+    }
+
+    @Override
+    public void stackOvergolServiceDisconnected() {
+        boundToStackOvergolService = false;
+    }
+
+    @Override
+    public void userAuthenticated() {
+        isUserAuth = true;
+    }
+
+    @Override
+    public void userNotAuthenticated() {
+        isUserAuth = false;
+    }
+
+    public void init() {
+        if (isUserAuth) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        } else {
+            Intent intent = new Intent(this, MainScreenActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
+    private void initViews() {
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
@@ -57,7 +121,6 @@ public class SplashActivity extends AppCompatActivity {
         WaveDrawable mWaveDrawableLogo = new WaveDrawable(this, R.mipmap.stack_overgol_icon);
 
         mLogo.setImageDrawable(mWaveDrawableLogo);
-
 
         ValueAnimator animator = ValueAnimator.ofFloat(0, 1);
         animator.setRepeatMode(ValueAnimator.REVERSE);
@@ -71,24 +134,4 @@ public class SplashActivity extends AppCompatActivity {
 
         mHandler.postDelayed(mHandlerTask, THREE_SECONDS);
     }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    private void init() {
-        if (mFirebaseUser == null) {
-            MyLog.i("SplashActivity - Not logged user, going to Login");
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-        } else {
-            MyLog.i("SplashActivity - User logged: " + mFirebaseUser.getDisplayName());
-            Intent intent = new Intent(this, MainScreenActivity.class);
-            startActivity(intent);
-            finish();
-        }
-    }
-
 }

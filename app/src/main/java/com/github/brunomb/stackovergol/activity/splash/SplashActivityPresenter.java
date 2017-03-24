@@ -1,4 +1,4 @@
-package com.github.brunomb.stackovergol.activity.login;
+package com.github.brunomb.stackovergol.activity.splash;
 
 import android.content.ComponentName;
 import android.content.ServiceConnection;
@@ -11,12 +11,12 @@ import com.github.brunomb.stackovergol.service.StackOvergolService;
 import java.lang.ref.WeakReference;
 
 /**
- * Created by brunomb on 2/11/2017
+ * Created by brunomb on 3/17/2017
  */
 
-class LoginPresenter implements LoginMVP.PresenterOps {
+class SplashActivityPresenter implements SplashMVP.PresenterOps {
 
-    private WeakReference<LoginMVP.ViewOps> mView;
+    private WeakReference<SplashMVP.ViewOps> mView;
     private StackOvergolService stackOvergolService;
 
     private ServiceConnection connection = new ServiceConnection() {
@@ -35,7 +35,7 @@ class LoginPresenter implements LoginMVP.PresenterOps {
         }
     };
 
-    LoginPresenter(LoginMVP.ViewOps view) {
+    SplashActivityPresenter(SplashMVP.ViewOps view) {
         mView = new WeakReference<>(view);
     }
 
@@ -50,24 +50,17 @@ class LoginPresenter implements LoginMVP.PresenterOps {
     }
 
     @Override
-    public void setView(LoginMVP.ViewOps view) {
-        mView = new WeakReference<>(view);
-    }
-
-    @Override
-    public void doLogin(String email, String password) {
-        mView.get().showLoading();
-        stackOvergolService.login(email, password, new StackOvergolAPI.GenericCallback() {
+    public void initFireBase() {
+        stackOvergolService.initFirebase();
+        stackOvergolService.checkUserAuth(new StackOvergolAPI.GenericCallback() {
             @Override
             public void onSuccess() {
-                mView.get().hideLoading();
-                mView.get().onLoginSuccessfully();
+                mView.get().userAuthenticated();
             }
 
             @Override
             public void onFailure(StackOvergolError error) {
-                mView.get().hideLoading();
-                mView.get().showErrorMessage(error);
+                mView.get().userNotAuthenticated();
             }
         });
     }

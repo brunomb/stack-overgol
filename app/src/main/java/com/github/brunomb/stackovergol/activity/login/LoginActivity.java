@@ -1,7 +1,9 @@
 package com.github.brunomb.stackovergol.activity.login;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -12,8 +14,8 @@ import android.widget.Button;
 import com.github.brunomb.stackovergol.R;
 import com.github.brunomb.stackovergol.activity.main.MainScreenActivity;
 import com.github.brunomb.stackovergol.model.StackOvergolError;
+import com.github.brunomb.stackovergol.service.StackOvergolService;
 import com.github.brunomb.stackovergol.utils.MyLog;
-import com.github.brunomb.stackovergol.utils.StateMaintainer;
 import com.github.brunomb.stackovergol.utils.Validator;
 import com.github.guilhermesgb.marqueeto.LabelledMarqueeEditText;
 
@@ -27,8 +29,7 @@ public class LoginActivity extends AppCompatActivity implements LoginMVP.ViewOps
     private String password;
     private boolean isEmailValid = false;
     private boolean isPasswordValid = false;
-    private final StateMaintainer mStateMaintainer =
-            new StateMaintainer(getFragmentManager(), LoginActivity.class.getName());
+    private boolean boundToStackOvergolService = false;
     private ProgressDialog loading;
 
     private LoginMVP.PresenterOps mPresenter;
@@ -45,12 +46,53 @@ public class LoginActivity extends AppCompatActivity implements LoginMVP.ViewOps
         ButterKnife.bind(this);
 
         setupViews();
-        setupMVP();
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mPresenter = new LoginPresenter(this);
+        mPresenter.bindToStackOvergolService();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (boundToStackOvergolService) {
+            mPresenter.unbindFromStackOvergolService();
+        }
+    }
+
 
     @OnClick(R.id.sog_login_bt_login)
     public void login() {
         mPresenter.doLogin(email, password);
+    }
+
+    @Override
+    public boolean doBindToStackOvergolService(ServiceConnection connection) {
+        if (!boundToStackOvergolService) {
+            Intent intent = new Intent(this, StackOvergolService.class);
+            return bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void doUnbindToStackOvergolService(ServiceConnection connection) {
+        unbindService(connection);
+        boundToStackOvergolService = false;
+    }
+
+    @Override
+    public void stackOvergolServiceConnected() {
+        boundToStackOvergolService = true;
+    }
+
+    @Override
+    public void stackOvergolServiceDisconnected() {
+        boundToStackOvergolService = false;
     }
 
     @Override
@@ -101,17 +143,17 @@ public class LoginActivity extends AppCompatActivity implements LoginMVP.ViewOps
         enableLoginButton();
     }
 
-    private void setupMVP() {
-        if (mStateMaintainer.firstTimeIn()) {
-            LoginPresenter presenter = new LoginPresenter(this);
-            mPresenter = presenter;
-            mStateMaintainer.put(mPresenter);
-            mPresenter.initFireBase();
-        } else {
-            mPresenter = mStateMaintainer.get(LoginPresenter.class.getName());
-            mPresenter.setView(this);
-        }
-    }
+//    private void setupMVP() {
+//        if (mStateMaintainer.firstTimeIn()) {
+//            LoginPresenter presenter = new LoginPresenter(this);
+//            mPresenter = presenter;
+//            mStateMaintainer.put(mPresenter);
+//            mPresenter.initFireBase();
+//        } else {
+//            mPresenter = mStateMaintainer.get(LoginPresenter.class.getName());
+//            mPresenter.setView(this);
+//        }
+//    }
 
     private void createEmailValidation() {
         etEmail.setTextChangedListener(new TextWatcher() {

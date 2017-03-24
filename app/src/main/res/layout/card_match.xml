@@ -21,7 +21,7 @@
                 android:id="@+id/sog_card_match_tv_date"
                 android:gravity="end"
                 android:textSize="15sp"/>
-        
+
     </android.support.v7.widget.CardView>
 
 </LinearLayout>
