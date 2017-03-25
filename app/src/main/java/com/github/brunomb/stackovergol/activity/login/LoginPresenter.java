@@ -56,7 +56,6 @@ class LoginPresenter implements LoginMVP.PresenterOps {
 
     @Override
     public void doLogin(String email, String password) {
-        mView.get().showLoading();
         stackOvergolService.login(email, password, new StackOvergolAPI.GenericCallback() {
             @Override
             public void onSuccess() {

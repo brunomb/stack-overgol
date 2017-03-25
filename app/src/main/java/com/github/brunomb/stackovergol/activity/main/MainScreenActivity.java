@@ -2,7 +2,9 @@ package com.github.brunomb.stackovergol.activity.main;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -19,18 +21,17 @@ import android.widget.TextView;
 import com.github.brunomb.stackovergol.R;
 import com.github.brunomb.stackovergol.activity.login.LoginActivity;
 import com.github.brunomb.stackovergol.activity.matches.MatchesFragment;
+import com.github.brunomb.stackovergol.service.StackOvergolService;
 import com.github.brunomb.stackovergol.utils.MyLog;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class MainScreenActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, MatchesFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, MatchesFragment.OnFragmentInteractionListener, MainMVP.ViewOps {
 
-    private FirebaseAuth mFirebaseAuth;
-    private FirebaseUser mFirebaseUser;
+    private boolean boundToStackOvergolService = false;
 
-    final String[] fragments ={
-            "com.github.brunomb.stackovergol.activity.matches.MatchesFragment"};
+    private MainMVP.PresenterOps mPresenter;
+
+    final String[] fragments ={"com.github.brunomb.stackovergol.activity.matches.MatchesFragment"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +40,7 @@ public class MainScreenActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(getResources().getString(R.string.app_name));
 
-        MyLog.i("MainScreenActivity - onCreate");
-
         setSupportActionBar(toolbar);
-
-        // Initialize Firebase Auth
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -60,7 +55,8 @@ public class MainScreenActivity extends AppCompatActivity
         TextView tvUserRole = (TextView) header.findViewById(R.id.sog_nav_menu_tv_role);
         tvUserRole.setText(getResources().getString(R.string.admin));
         TextView tvUser = (TextView) header.findViewById(R.id.sog_nav_menu_tv_user);
-        tvUser.setText(mFirebaseUser.getEmail());
+        //TODO GET USER NAME
+        tvUser.setText("Temp");
         toggle.syncState();
     }
 
@@ -90,11 +86,7 @@ public class MainScreenActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_logout) {
-            mFirebaseAuth.signOut();
-            MyLog.i("MainScreenActivity -Logout, going to Login");
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            finish();
+            mPresenter.logout();
             return true;
         }
 
@@ -119,6 +111,21 @@ public class MainScreenActivity extends AppCompatActivity
         return true;
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mPresenter = new MainScreenPresenter(this);
+        mPresenter.bindToStackOvergolService();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (boundToStackOvergolService) {
+            mPresenter.unbindFromStackOvergolService();
+        }
+    }
+
     public void commitFragment(int fragmentCont) {
         FragmentTransaction tx = getFragmentManager().beginTransaction();
 //        MatchesFragment teste = MatchesFragment.newInstance("teste1","teste2");
@@ -129,5 +136,39 @@ public class MainScreenActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    @Override
+    public boolean doBindToStackOvergolService(ServiceConnection connection) {
+        if (!boundToStackOvergolService) {
+            Intent intent = new Intent(this, StackOvergolService.class);
+            return bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void doUnbindToStackOvergolService(ServiceConnection connection) {
+        unbindService(connection);
+        boundToStackOvergolService = false;
+    }
+
+    @Override
+    public void stackOvergolServiceConnected() {
+        boundToStackOvergolService = true;
+    }
+
+    @Override
+    public void stackOvergolServiceDisconnected() {
+        boundToStackOvergolService = false;
+    }
+
+    @Override
+    public void onLogout() {
+        MyLog.i("MainScreenActivity -Logout, going to Login");
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

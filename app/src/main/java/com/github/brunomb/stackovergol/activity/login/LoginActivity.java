@@ -63,9 +63,17 @@ public class LoginActivity extends AppCompatActivity implements LoginMVP.ViewOps
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (!(loading == null)) {
+            loading.dismiss();
+        }
+    }
 
     @OnClick(R.id.sog_login_bt_login)
     public void login() {
+        showLoading();
         mPresenter.doLogin(email, password);
     }
 
@@ -105,15 +113,16 @@ public class LoginActivity extends AppCompatActivity implements LoginMVP.ViewOps
 
     @Override
     public void showLoading() {
-        loading = new ProgressDialog(LoginActivity.this);
-        loading.setMessage("Loading.");
-        loading.setCancelable(false);
-        loading.show();
+        if (!loading.isShowing()) {
+            loading.show();
+        }
     }
 
     @Override
     public void hideLoading() {
-        loading.hide();
+        if (!(loading == null)) {
+            loading.hide();
+        }
     }
 
     @Override
@@ -140,20 +149,12 @@ public class LoginActivity extends AppCompatActivity implements LoginMVP.ViewOps
         etPassword.setErrorEnabled(true);
         createPasswordValidation();
 
+        loading = new ProgressDialog(LoginActivity.this);
+        loading.setMessage("Loading.");
+        loading.setCancelable(false);
+
         enableLoginButton();
     }
-
-//    private void setupMVP() {
-//        if (mStateMaintainer.firstTimeIn()) {
-//            LoginPresenter presenter = new LoginPresenter(this);
-//            mPresenter = presenter;
-//            mStateMaintainer.put(mPresenter);
-//            mPresenter.initFireBase();
-//        } else {
-//            mPresenter = mStateMaintainer.get(LoginPresenter.class.getName());
-//            mPresenter.setView(this);
-//        }
-//    }
 
     private void createEmailValidation() {
         etEmail.setTextChangedListener(new TextWatcher() {

@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.github.brunomb.stackovergol.model.StackOvergolError;
+import com.github.brunomb.stackovergol.utils.MyLog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -32,12 +33,15 @@ public class StackOvergolService extends Service {
     private static final int INIT_FIREBASE = 0;
     private static final int CHECK_USER_AUTH = 1;
     private static final int LOGIN = 2;
+    private static final int LOGOUT = 3;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+        MyLog.i("---------- ----------");
+        MyLog.i("SOG - service - onBind");
         return binder;
     }
 
@@ -61,22 +65,30 @@ public class StackOvergolService extends Service {
     }
 
     public void initFirebase() {
+        MyLog.i("---------- ----------");
+        MyLog.i("SOG - service - initFirebase");
         Message message = serviceHandler.obtainMessage(INIT_FIREBASE);
         serviceHandler.sendMessage(message);
     }
 
     private void doInitFirebase() {
+        MyLog.i("---------- ----------");
+        MyLog.i("SOG - service - doInitFirebase");
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
     }
 
     public void checkUserAuth(StackOvergolAPI.GenericCallback callback ) {
+        MyLog.i("---------- ----------");
+        MyLog.i("SOG - service - checkUserAuth");
         Message message = serviceHandler.obtainMessage(CHECK_USER_AUTH);
-        message.obj = new StackOvergolEvent(callback);
+        message.obj = new GenericOperation(callback);
         serviceHandler.sendMessage(message);
     }
 
-    public void doCheckUserAuth(final StackOvergolEvent event) {
+    public void doCheckUserAuth(final GenericOperation event) {
+        MyLog.i("---------- ----------");
+        MyLog.i("SOG - service - doCheckUserAuth");
         final StackOvergolAPI.GenericCallback callback = event.getCallback();
         if (mFirebaseUser == null) {
             mainHandler.post(new Runnable() {
@@ -97,13 +109,18 @@ public class StackOvergolService extends Service {
     }
 
     public void login(String email, String password, StackOvergolAPI.GenericCallback callback) {
+        MyLog.i("---------- ----------");
+        MyLog.i("SOG - service - login");
         Message message = serviceHandler.obtainMessage(LOGIN);
         message.obj = new LoginOperation(email, password, callback);
         serviceHandler.sendMessage(message);
     }
 
     private void doLogin(final LoginOperation login) {
+        MyLog.i("---------- ----------");
+        MyLog.i("SOG - service - doLogin");
         final StackOvergolAPI.GenericCallback callback = login.getCallback();
+
         mFirebaseAuth.signInWithEmailAndPassword(login.getLogin(), login.getPassword()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -129,74 +146,102 @@ public class StackOvergolService extends Service {
                 }
             }
         });
+
+        MyLog.i("----------------");
     }
 
-    private final class StackOvergolServiceHandler extends Handler {
+    public void logout(StackOvergolAPI.GenericCallback callback) {
+        MyLog.i("---------- ----------");
+        MyLog.i("SOG - service - logout");
+        Message message = serviceHandler.obtainMessage(LOGOUT);
+        message.obj = new GenericOperation(callback);
+        serviceHandler.sendMessage(message);
+    }
 
-        StackOvergolServiceHandler(Looper looper) {
-            super(looper);
-        }
+    private void doLogout(final GenericOperation logout) {
+        MyLog.i("---------- ----------");
+        MyLog.i("SOG - service - doLogout");
+        final StackOvergolAPI.GenericCallback callback = logout.getCallback();
 
-        @Override
-        public void handleMessage(Message message) {
-            switch(message.what) {
-                case INIT_FIREBASE:
-                    doInitFirebase();
-                    break;
-                case CHECK_USER_AUTH:
-                    doCheckUserAuth((StackOvergolEvent) message.obj);
-                    break;
-                case LOGIN:
-                    doLogin((LoginOperation) message.obj);
-                    break;
-                default:
-                    break;
+        mFirebaseAuth.signOut();
+        mainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                callback.onSuccess();
             }
-        }
+        });
+        MyLog.i("----------------");
+}
+
+private final class StackOvergolServiceHandler extends Handler {
+
+    StackOvergolServiceHandler(Looper looper) {
+        super(looper);
     }
 
-    public class ServiceBinder extends Binder {
-        public StackOvergolService getService() {
-            return StackOvergolService.this;
+    @Override
+    public void handleMessage(Message message) {
+        switch(message.what) {
+            case INIT_FIREBASE:
+                doInitFirebase();
+                break;
+            case CHECK_USER_AUTH:
+                doCheckUserAuth((GenericOperation) message.obj);
+                break;
+            case LOGIN:
+                doLogin((LoginOperation) message.obj);
+                break;
+            case LOGOUT:
+                doLogout((GenericOperation) message.obj);
+                break;
+            default:
+                break;
         }
     }
+}
 
-    private class StackOvergolEvent {
+public class ServiceBinder extends Binder {
+    public StackOvergolService getService() {
+        return StackOvergolService.this;
+    }
+}
 
-        private final StackOvergolAPI.GenericCallback callback;
+private class GenericOperation {
 
-        StackOvergolEvent(StackOvergolAPI.GenericCallback callback) {
-            this.callback = callback;
-        }
+    private final StackOvergolAPI.GenericCallback callback;
 
-        StackOvergolAPI.GenericCallback getCallback() {
-            return callback;
-        }
+    GenericOperation(StackOvergolAPI.GenericCallback callback) {
+        this.callback = callback;
     }
 
-    private class LoginOperation {
-
-        private final String login;
-        private final String password;
-        private final StackOvergolAPI.GenericCallback callback;
-
-        LoginOperation(String login, String password, StackOvergolAPI.GenericCallback callback) {
-            this.login = login;
-            this.password = password;
-            this.callback = callback;
-        }
-
-        String getLogin() {
-            return login;
-        }
-
-        String getPassword() {
-            return password;
-        }
-
-        StackOvergolAPI.GenericCallback getCallback() {
-            return callback;
-        }
+    StackOvergolAPI.GenericCallback getCallback() {
+        return callback;
     }
+}
+
+private class LoginOperation {
+
+    private final String login;
+    private final String password;
+    private final StackOvergolAPI.GenericCallback callback;
+
+    LoginOperation(String login, String password, StackOvergolAPI.GenericCallback callback) {
+        this.login = login;
+        this.password = password;
+        this.callback = callback;
+    }
+
+    String getLogin() {
+        return login;
+    }
+
+    String getPassword() {
+        return password;
+    }
+
+    StackOvergolAPI.GenericCallback getCallback() {
+        return callback;
+    }
+}
 
 }

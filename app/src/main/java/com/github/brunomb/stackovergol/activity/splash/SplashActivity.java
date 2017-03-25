@@ -4,6 +4,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,7 @@ import com.github.brunomb.stackovergol.R;
 import com.github.brunomb.stackovergol.activity.login.LoginActivity;
 import com.github.brunomb.stackovergol.activity.main.MainScreenActivity;
 import com.github.brunomb.stackovergol.service.StackOvergolService;
+import com.github.brunomb.stackovergol.utils.MyLog;
 import com.race604.drawable.wave.WaveDrawable;
 
 import butterknife.BindView;
@@ -43,6 +45,8 @@ public class SplashActivity extends AppCompatActivity implements SplashMVP.ViewO
 
         ButterKnife.bind(this);
         initViews();
+
+        testArea();
     }
 
     @Override
@@ -59,14 +63,6 @@ public class SplashActivity extends AppCompatActivity implements SplashMVP.ViewO
             mPresenter.unbindFromStackOvergolService();
         }
     }
-
-//    @Override
-//    protected void onPause() {
-//        if (boundToStackOvergolService) {
-//            mPresenter.unbindFromStackOvergolService();
-//        }
-//        super.onPause();
-//    }
 
     @Override
     public boolean doBindToStackOvergolService(ServiceConnection connection) {
@@ -133,5 +129,25 @@ public class SplashActivity extends AppCompatActivity implements SplashMVP.ViewO
         mWaveDrawableLogo.setIndeterminate(true);
 
         mHandler.postDelayed(mHandlerTask, THREE_SECONDS);
+    }
+
+    public void testArea() {
+        MyLog.i("--------------------------------------");
+        MyLog.i("Test Area");
+//        AccountManager am = AccountManager.get(this);
+//        Account[] accounts = am.getAccounts();
+//
+//        MyLog.i("Accounts size: " + accounts.length);
+//        for (Account ac : accounts) {
+//            if (ac.type.equals("org.telegram.messenger")) {
+//                String acname = ac.name;
+//                String actype = ac.type;
+//                // Take your time to look at all available accounts
+//                MyLog.i("Accounts : " + acname + ", " + actype);
+//            }
+//        }
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.telegram.me/stack_overgol_bot"));
+        startActivity(intent);
+        MyLog.i("--------------------------------------");
     }
 }
