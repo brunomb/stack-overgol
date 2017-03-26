@@ -7,7 +7,6 @@ import android.os.IBinder;
 import com.github.brunomb.stackovergol.model.StackOvergolError;
 import com.github.brunomb.stackovergol.service.StackOvergolAPI;
 import com.github.brunomb.stackovergol.service.StackOvergolService;
-import com.github.brunomb.stackovergol.utils.MyLog;
 
 import java.lang.ref.WeakReference;
 
@@ -51,18 +50,29 @@ class SplashActivityPresenter implements SplashMVP.PresenterOps {
     }
 
     @Override
-    public void initFireBase(String telegramID) {
-        stackOvergolService.initFirebase();
-        stackOvergolService.checkUserAuth(new StackOvergolAPI.GenericCallback() {
+    public void initFireBase(final String telegramID) {
+        stackOvergolService.initFirebase(new StackOvergolAPI.GenericCallback() {
             @Override
             public void onSuccess() {
-                MyLog.i("XXXXXXXX_XXXXXXXX");
+                checkUserAuth(telegramID);
+            }
+
+            @Override
+            public void onFailure(StackOvergolError error) {
+                //TODO DO THIS
+            }
+        });
+    }
+
+    private void checkUserAuth(String telegramID) {
+        stackOvergolService.checkUserAuth(telegramID, new StackOvergolAPI.GenericCallback() {
+            @Override
+            public void onSuccess() {
                 mView.get().userAuthenticated();
             }
 
             @Override
             public void onFailure(StackOvergolError error) {
-                MyLog.i("XXXXXXXX_XXXXXXXX");
                 mView.get().userNotAuthenticated();
             }
         });

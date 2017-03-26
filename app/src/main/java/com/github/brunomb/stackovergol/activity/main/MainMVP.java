@@ -13,13 +13,13 @@ interface MainMVP {
         void doUnbindToStackOvergolService(ServiceConnection connection);
         void stackOvergolServiceConnected();
         void stackOvergolServiceDisconnected();
-        void onLogout();
+//        void onLogout();
     }
 
     interface PresenterOps {
         boolean bindToStackOvergolService();
         void unbindFromStackOvergolService();
         void setView(ViewOps view);
-        void logout();
+//        void logout();
     }
 }

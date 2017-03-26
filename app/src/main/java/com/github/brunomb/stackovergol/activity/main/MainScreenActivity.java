@@ -19,10 +19,10 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.github.brunomb.stackovergol.R;
-import com.github.brunomb.stackovergol.activity.login.LoginActivity;
 import com.github.brunomb.stackovergol.activity.matches.MatchesFragment;
 import com.github.brunomb.stackovergol.service.StackOvergolService;
-import com.github.brunomb.stackovergol.utils.MyLog;
+
+//import com.github.brunomb.stackovergol.activity.login.LoginActivity;
 
 public class MainScreenActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MatchesFragment.OnFragmentInteractionListener, MainMVP.ViewOps {
@@ -86,7 +86,7 @@ public class MainScreenActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_logout) {
-            mPresenter.logout();
+//            mPresenter.logout();
             return true;
         }
 
@@ -162,13 +162,5 @@ public class MainScreenActivity extends AppCompatActivity
     @Override
     public void stackOvergolServiceDisconnected() {
         boundToStackOvergolService = false;
-    }
-
-    @Override
-    public void onLogout() {
-        MyLog.i("MainScreenActivity -Logout, going to Login");
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-        finish();
     }
 }

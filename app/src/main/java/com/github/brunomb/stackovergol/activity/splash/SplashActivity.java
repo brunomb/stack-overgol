@@ -20,7 +20,6 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 
 import com.github.brunomb.stackovergol.R;
-import com.github.brunomb.stackovergol.activity.login.LoginActivity;
 import com.github.brunomb.stackovergol.activity.noAccount.NoAccountActivity;
 import com.github.brunomb.stackovergol.service.StackOvergolService;
 import com.github.brunomb.stackovergol.utils.MyLog;
@@ -136,9 +135,9 @@ public class SplashActivity extends AppCompatActivity implements SplashMVP.ViewO
 
     public void init() {
         if (isUserAuth) {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            finish();
+//            Intent intent = new Intent(this, LoginActivity.class);
+//            startActivity(intent);
+//            finish();
         } else {
             Intent intent = new Intent(this, NoAccountActivity.class);
             startActivity(intent);
