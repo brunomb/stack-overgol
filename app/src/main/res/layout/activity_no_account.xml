@@ -24,6 +24,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
+        android:textSize="20sp"
+        android:textStyle="bold"
         android:text="@string/sog_no_acc_text"/>
+
+    <Button
+        android:id="@+id/sog_no_acc_bt_leave"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="@string/leave"
+        android:background="@color/loginBTBackGround"
+        android:textColor="@color/loginBTText"
+        android:layout_marginTop="21dp" />
 
 </LinearLayout>
