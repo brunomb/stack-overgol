@@ -66,21 +66,21 @@ public class StackOvergolService extends Service {
 
     public void initFirebase() {
         MyLog.i("---------- ----------");
-        MyLog.i("SOG - service - initFirebase");
+        MyLog.i("service - initFirebase");
         Message message = serviceHandler.obtainMessage(INIT_FIREBASE);
         serviceHandler.sendMessage(message);
     }
 
     private void doInitFirebase() {
         MyLog.i("---------- ----------");
-        MyLog.i("SOG - service - doInitFirebase");
+        MyLog.i("service - doInitFirebase");
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
     }
 
     public void checkUserAuth(StackOvergolAPI.GenericCallback callback ) {
         MyLog.i("---------- ----------");
-        MyLog.i("SOG - service - checkUserAuth");
+        MyLog.i("service - checkUserAuth");
         Message message = serviceHandler.obtainMessage(CHECK_USER_AUTH);
         message.obj = new GenericOperation(callback);
         serviceHandler.sendMessage(message);
@@ -88,7 +88,7 @@ public class StackOvergolService extends Service {
 
     public void doCheckUserAuth(final GenericOperation event) {
         MyLog.i("---------- ----------");
-        MyLog.i("SOG - service - doCheckUserAuth");
+        MyLog.i("service - doCheckUserAuth");
         final StackOvergolAPI.GenericCallback callback = event.getCallback();
         if (mFirebaseUser == null) {
             mainHandler.post(new Runnable() {
@@ -110,7 +110,7 @@ public class StackOvergolService extends Service {
 
     public void login(String email, String password, StackOvergolAPI.GenericCallback callback) {
         MyLog.i("---------- ----------");
-        MyLog.i("SOG - service - login");
+        MyLog.i("service - login");
         Message message = serviceHandler.obtainMessage(LOGIN);
         message.obj = new LoginOperation(email, password, callback);
         serviceHandler.sendMessage(message);
@@ -118,7 +118,7 @@ public class StackOvergolService extends Service {
 
     private void doLogin(final LoginOperation login) {
         MyLog.i("---------- ----------");
-        MyLog.i("SOG - service - doLogin");
+        MyLog.i("service - doLogin");
         final StackOvergolAPI.GenericCallback callback = login.getCallback();
 
         mFirebaseAuth.signInWithEmailAndPassword(login.getLogin(), login.getPassword()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -152,7 +152,7 @@ public class StackOvergolService extends Service {
 
     public void logout(StackOvergolAPI.GenericCallback callback) {
         MyLog.i("---------- ----------");
-        MyLog.i("SOG - service - logout");
+        MyLog.i("service - logout");
         Message message = serviceHandler.obtainMessage(LOGOUT);
         message.obj = new GenericOperation(callback);
         serviceHandler.sendMessage(message);
@@ -160,7 +160,7 @@ public class StackOvergolService extends Service {
 
     private void doLogout(final GenericOperation logout) {
         MyLog.i("---------- ----------");
-        MyLog.i("SOG - service - doLogout");
+        MyLog.i("service - doLogout");
         final StackOvergolAPI.GenericCallback callback = logout.getCallback();
 
         mFirebaseAuth.signOut();

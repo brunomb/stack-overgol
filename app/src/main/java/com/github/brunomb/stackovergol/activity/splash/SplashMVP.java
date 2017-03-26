@@ -20,7 +20,7 @@ public class SplashMVP {
     interface PresenterOps {
         boolean bindToStackOvergolService();
         void unbindFromStackOvergolService();
-        void initFireBase();
+        void initFireBase(String telegramID);
     }
 
 }

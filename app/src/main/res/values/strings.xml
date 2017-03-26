@@ -26,4 +26,6 @@
     <string name="no_matches">no_matches</string>
     <string name="history">History</string>
     <string name="match_of_the_week">Match of the week</string>
+    <string name="sog_no_acc_text">Você não possui uma conta no StackOvergol</string>
+    <string name="permission_needed">Permissão Necessária</string>
 </resources>

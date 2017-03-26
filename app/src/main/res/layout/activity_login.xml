@@ -21,11 +21,6 @@
         android:src="@mipmap/stack_overgol_icon"
         android:contentDescription="@string/sog_login_id_logo" />
 
-    <EditText
-        android:layout_width="10dp"
-        android:inputType="numberPassword"
-        android:layout_height="10dp" />
-
     <com.github.guilhermesgb.marqueeto.LabelledMarqueeEditText
         android:id="@+id/sog_login_et_email"
         android:layout_width="250dp"

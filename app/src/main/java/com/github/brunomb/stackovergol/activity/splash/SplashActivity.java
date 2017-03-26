@@ -1,19 +1,27 @@
 package com.github.brunomb.stackovergol.activity.splash;
 
+import android.Manifest;
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.net.Uri;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 
 import com.github.brunomb.stackovergol.R;
 import com.github.brunomb.stackovergol.activity.login.LoginActivity;
-import com.github.brunomb.stackovergol.activity.main.MainScreenActivity;
+import com.github.brunomb.stackovergol.activity.noAccount.NoAccountActivity;
 import com.github.brunomb.stackovergol.service.StackOvergolService;
 import com.github.brunomb.stackovergol.utils.MyLog;
 import com.race604.drawable.wave.WaveDrawable;
@@ -24,10 +32,12 @@ import butterknife.ButterKnife;
 public class SplashActivity extends AppCompatActivity implements SplashMVP.ViewOps {
 
     private static final int THREE_SECONDS = 3000;
+    private static final int MY_GET_ACCOUNT_PERMISSION = 1;
 
     private SplashMVP.PresenterOps mPresenter;
     private boolean boundToStackOvergolService = false;
     private boolean isUserAuth = false;
+    private WaveDrawable mWaveDrawableLogo;
     private Handler mHandler = new Handler();
     private Runnable mHandlerTask = new Runnable() {
         @Override
@@ -45,8 +55,6 @@ public class SplashActivity extends AppCompatActivity implements SplashMVP.ViewO
 
         ButterKnife.bind(this);
         initViews();
-
-        testArea();
     }
 
     @Override
@@ -65,6 +73,21 @@ public class SplashActivity extends AppCompatActivity implements SplashMVP.ViewO
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case MY_GET_ACCOUNT_PERMISSION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    MyLog.i("Permission granted");
+                    getTelegramId();
+                } else {
+                    MyLog.i("Permission NOT granted");
+                    userNotAuthenticated();
+                }
+            }
+        }
+    }
+
+    @Override
     public boolean doBindToStackOvergolService(ServiceConnection connection) {
         Intent intent = new Intent(this, StackOvergolService.class);
         return bindService(intent, connection, Context.BIND_AUTO_CREATE);
@@ -79,7 +102,7 @@ public class SplashActivity extends AppCompatActivity implements SplashMVP.ViewO
     @Override
     public void stackOvergolServiceConnected() {
         boundToStackOvergolService = true;
-        mPresenter.initFireBase();
+        checkAccountPermission();
     }
 
     @Override
@@ -90,11 +113,25 @@ public class SplashActivity extends AppCompatActivity implements SplashMVP.ViewO
     @Override
     public void userAuthenticated() {
         isUserAuth = true;
+        animateLogo();
     }
 
     @Override
     public void userNotAuthenticated() {
         isUserAuth = false;
+        animateLogo();
+    }
+
+    private void showExplanation() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.permission_needed)
+                .setMessage("O StackOvergol precisa do seu ID do Telegram para verificar se você participa do grupo")
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        requestPermission();
+                    }
+                });
+        builder.create().show();
     }
 
     public void init() {
@@ -103,7 +140,7 @@ public class SplashActivity extends AppCompatActivity implements SplashMVP.ViewO
             startActivity(intent);
             finish();
         } else {
-            Intent intent = new Intent(this, MainScreenActivity.class);
+            Intent intent = new Intent(this, NoAccountActivity.class);
             startActivity(intent);
             finish();
         }
@@ -114,10 +151,13 @@ public class SplashActivity extends AppCompatActivity implements SplashMVP.ViewO
             getSupportActionBar().hide();
         }
 
-        WaveDrawable mWaveDrawableLogo = new WaveDrawable(this, R.mipmap.stack_overgol_icon);
+        mWaveDrawableLogo = new WaveDrawable(this, R.mipmap.stack_overgol_icon);
 
         mLogo.setImageDrawable(mWaveDrawableLogo);
+        MyLog.i("--------------------------------------");
+    }
 
+    public void animateLogo() {
         ValueAnimator animator = ValueAnimator.ofFloat(0, 1);
         animator.setRepeatMode(ValueAnimator.REVERSE);
         animator.setRepeatCount(ValueAnimator.INFINITE);
@@ -131,23 +171,41 @@ public class SplashActivity extends AppCompatActivity implements SplashMVP.ViewO
         mHandler.postDelayed(mHandlerTask, THREE_SECONDS);
     }
 
-    public void testArea() {
-        MyLog.i("--------------------------------------");
-        MyLog.i("Test Area");
-//        AccountManager am = AccountManager.get(this);
-//        Account[] accounts = am.getAccounts();
-//
-//        MyLog.i("Accounts size: " + accounts.length);
-//        for (Account ac : accounts) {
-//            if (ac.type.equals("org.telegram.messenger")) {
-//                String acname = ac.name;
-//                String actype = ac.type;
-//                // Take your time to look at all available accounts
-//                MyLog.i("Accounts : " + acname + ", " + actype);
-//            }
-//        }
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.telegram.me/stack_overgol_bot"));
-        startActivity(intent);
-        MyLog.i("--------------------------------------");
+    public void getTelegramId() {
+        AccountManager am = AccountManager.get(this);
+        Account[] accounts = am.getAccounts();
+
+        String telegramID = "";
+
+        for (Account ac : accounts) {
+            if (ac.type.equals("org.telegram.messenger")) {
+                telegramID = ac.name;
+            }
+        }
+
+        if (!telegramID.isEmpty()) {
+            mPresenter.initFireBase(telegramID);
+        } else {
+            userNotAuthenticated();
+        }
+    }
+
+    private void checkAccountPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.GET_ACCOUNTS)) {
+                showExplanation();
+            } else {
+                requestPermission();
+            }
+        } else {
+            getTelegramId();
+        }
+    }
+
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.GET_ACCOUNTS},
+                MY_GET_ACCOUNT_PERMISSION);
     }
 }
