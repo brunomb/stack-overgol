@@ -32,12 +32,9 @@ public class StackOvergolService extends Service {
 
     private static final int INIT_FIREBASE = 0;
     private static final int CHECK_USER_AUTH = 1;
-//    private static final int LOGIN = 2;
-//    private static final int LOGOUT = 3;
-//    private FirebaseAuth mFirebaseAuth;
-//    private FirebaseUser mFirebaseUser;
 
     private DatabaseReference mDatabase;
+    private User mUser;
 
     @Nullable
     @Override
@@ -117,12 +114,11 @@ public class StackOvergolService extends Service {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 //                MyLog.i((String) dataSnapshot.child("first_name").getValue());
-                User post = dataSnapshot.getValue(User.class);
-                MyLog.i("lastName: " + post.getFirstName());
-                MyLog.i("id: " + post.getId() + "");
-                MyLog.i("name: " + post.getLastName());
-                MyLog.i("Tyoe: " + post.getType());
-                MyLog.i("username: " + post.getUsername());
+                User user = dataSnapshot.getValue(User.class);
+                if (user != null) {
+                    mUser = user;
+                    callback.onSuccess();
+                }
             }
 
             @Override
@@ -133,88 +129,7 @@ public class StackOvergolService extends Service {
 
         Query query = mDatabase.child("users").equalTo(event.getTelegramID());
         MyLog.i(query.toString());
-//        if (mFirebaseUser == null) {
-//            mainHandler.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    callback.onSuccess();
-//                }
-//            });
-//        } else {
-//            mainHandler.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    //TODO SET MESSAGE
-//                    callback.onFailure(StackOvergolError.GENERAL_LOG_ERROR);
-//                }
-//            });
-//        }
     }
-
-//    public void login(String email, String password, StackOvergolAPI.GenericCallback callback) {
-//        MyLog.i("---------- ----------");
-//        MyLog.i("service - login");
-//        Message message = serviceHandler.obtainMessage(LOGIN);
-//        message.obj = new LoginOperation(email, password, callback);
-//        serviceHandler.sendMessage(message);
-//    }
-
-//    private void doLogin(final LoginOperation login) {
-//        MyLog.i("---------- ----------");
-//        MyLog.i("service - doLogin");
-//        final StackOvergolAPI.GenericCallback callback = login.getCallback();
-//
-////        mFirebaseAuth.signInWithEmailAndPassword(login.getLogin(), login.getPassword()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-////            @Override
-////            public void onComplete(@NonNull Task<AuthResult> task) {
-////                if (task.isSuccessful()) {
-////                    mainHandler.post(new Runnable() {
-////                        @Override
-////                        public void run() {
-////                            callback.onSuccess();
-////                        }
-////                    });
-////                } else {
-////                    final Exception exception = task.getException();
-////                    mainHandler.post(new Runnable() {
-////                        @Override
-////                        public void run() {
-////                            if (exception instanceof FirebaseAuthInvalidCredentialsException) {
-////                                callback.onFailure(StackOvergolError.INVALID_PASSWORD);
-////                            } else {
-////                                callback.onFailure(StackOvergolError.GENERAL_LOG_ERROR);
-////                            }
-////                        }
-////                    });
-////                }
-////            }
-////        });
-//
-//        MyLog.i("----------------");
-//    }
-//
-//    public void logout(StackOvergolAPI.GenericCallback callback) {
-//        MyLog.i("---------- ----------");
-//        MyLog.i("service - logout");
-//        Message message = serviceHandler.obtainMessage(LOGOUT);
-//        message.obj = new GenericOperation(callback);
-//        serviceHandler.sendMessage(message);
-//    }
-//
-//    private void doLogout(final GenericOperation logout) {
-//        MyLog.i("---------- ----------");
-//        MyLog.i("service - doLogout");
-//        final StackOvergolAPI.GenericCallback callback = logout.getCallback();
-//
-////        mFirebaseAuth.signOut();
-//        mainHandler.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                callback.onSuccess();
-//            }
-//        });
-//        MyLog.i("----------------");
-//    }
 
     private final class StackOvergolServiceHandler extends Handler {
 
@@ -231,12 +146,6 @@ public class StackOvergolService extends Service {
                 case CHECK_USER_AUTH:
                     doCheckUserAuth((CheckUserAuthOperation) message.obj);
                     break;
-//                case LOGIN:
-//                    doLogin((LoginOperation) message.obj);
-//                    break;
-//                case LOGOUT:
-//                    doLogout((GenericOperation) message.obj);
-//                    break;
                 default:
                     break;
             }
@@ -262,31 +171,6 @@ public class StackOvergolService extends Service {
         }
     }
 
-    private class LoginOperation {
-
-        private final String login;
-        private final String password;
-        private final StackOvergolAPI.GenericCallback callback;
-
-        LoginOperation(String login, String password, StackOvergolAPI.GenericCallback callback) {
-            this.login = login;
-            this.password = password;
-            this.callback = callback;
-        }
-
-        String getLogin() {
-            return login;
-        }
-
-        String getPassword() {
-            return password;
-        }
-
-        StackOvergolAPI.GenericCallback getCallback() {
-            return callback;
-        }
-    }
-
     private class CheckUserAuthOperation {
 
         private final String telegramID;
@@ -304,6 +188,15 @@ public class StackOvergolService extends Service {
         StackOvergolAPI.GenericCallback getCallback() {
             return callback;
         }
+    }
+
+    public String getUsername() {
+        return mUser.getUsername();
+    }
+
+    public String getUserRole() {
+        //TODO CHANGE THIS AFTER DB REFACTOR
+        return "Admin";
     }
 
 }

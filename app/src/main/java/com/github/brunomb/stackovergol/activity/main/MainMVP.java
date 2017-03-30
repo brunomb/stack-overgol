@@ -19,6 +19,8 @@ interface MainMVP {
     interface PresenterOps {
         boolean bindToStackOvergolService();
         void unbindFromStackOvergolService();
+        String getUsername();
+        String getUserRole();
         void setView(ViewOps view);
 //        void logout();
     }

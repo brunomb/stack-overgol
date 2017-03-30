@@ -32,7 +32,7 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesAdapter.MatchesV
     @Override
     public void onBindViewHolder(MatchesAdapter.MatchesViewHolder holder, int position) {
         holder.matchName.setText(matchList.get(position).getName());
-        holder.matchName.setText(matchList.get(position).getTimeStamp());
+        holder.matchDate.setText(matchList.get(position).getTimeStamp());
     }
 
     @Override

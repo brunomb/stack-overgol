@@ -20,9 +20,9 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 
 import com.github.brunomb.stackovergol.R;
+import com.github.brunomb.stackovergol.activity.main.MainScreenActivity;
 import com.github.brunomb.stackovergol.activity.noAccount.NoAccountActivity;
 import com.github.brunomb.stackovergol.service.StackOvergolService;
-import com.github.brunomb.stackovergol.utils.MyLog;
 import com.race604.drawable.wave.WaveDrawable;
 
 import butterknife.BindView;
@@ -32,10 +32,12 @@ public class SplashActivity extends AppCompatActivity implements SplashMVP.ViewO
 
     private static final int THREE_SECONDS = 3000;
     private static final int MY_GET_ACCOUNT_PERMISSION = 1;
+    private static final String TELEGRAM_ACCOUNT = "org.telegram.messenger";
 
     private SplashMVP.PresenterOps mPresenter;
     private boolean boundToStackOvergolService = false;
     private boolean isUserAuth = false;
+
     private WaveDrawable mWaveDrawableLogo;
     private Handler mHandler = new Handler();
     private Runnable mHandlerTask = new Runnable() {
@@ -76,10 +78,8 @@ public class SplashActivity extends AppCompatActivity implements SplashMVP.ViewO
         switch (requestCode) {
             case MY_GET_ACCOUNT_PERMISSION: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    MyLog.i("Permission granted");
                     getTelegramId();
                 } else {
-                    MyLog.i("Permission NOT granted");
                     userNotAuthenticated();
                 }
             }
@@ -124,7 +124,7 @@ public class SplashActivity extends AppCompatActivity implements SplashMVP.ViewO
     private void showExplanation() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.permission_needed)
-                .setMessage("O StackOvergol precisa do seu ID do Telegram para verificar se você participa do grupo")
+                .setMessage(R.string.ask_permission)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         requestPermission();
@@ -135,9 +135,9 @@ public class SplashActivity extends AppCompatActivity implements SplashMVP.ViewO
 
     public void init() {
         if (isUserAuth) {
-//            Intent intent = new Intent(this, LoginActivity.class);
-//            startActivity(intent);
-//            finish();
+            Intent intent = new Intent(this, MainScreenActivity.class);
+            startActivity(intent);
+            finish();
         } else {
             Intent intent = new Intent(this, NoAccountActivity.class);
             startActivity(intent);
@@ -153,7 +153,6 @@ public class SplashActivity extends AppCompatActivity implements SplashMVP.ViewO
         mWaveDrawableLogo = new WaveDrawable(this, R.mipmap.stack_overgol_icon);
 
         mLogo.setImageDrawable(mWaveDrawableLogo);
-        MyLog.i("--------------------------------------");
     }
 
     public void animateLogo() {
@@ -177,7 +176,7 @@ public class SplashActivity extends AppCompatActivity implements SplashMVP.ViewO
         String telegramID = "";
 
         for (Account ac : accounts) {
-            if (ac.type.equals("org.telegram.messenger")) {
+            if (ac.type.equals(TELEGRAM_ACCOUNT)) {
                 telegramID = ac.name;
             }
         }
@@ -191,7 +190,6 @@ public class SplashActivity extends AppCompatActivity implements SplashMVP.ViewO
 
     private void checkAccountPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
-
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.GET_ACCOUNTS)) {
                 showExplanation();
             } else {

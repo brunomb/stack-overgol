@@ -1,6 +1,8 @@
 package com.github.brunomb.stackovergol.model;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by brunomb on 3/16/2017
@@ -16,12 +18,15 @@ public class Match {
     }
 
     public String getName() {
-//        return name;
-        return "24234asdasdqwasdqwedawe";
+        return name;
     }
 
     public String getTimeStamp() {
-//        return date.toString();
-        return "24234";
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy", Locale.ENGLISH);
+        return sdf.format(date);
+    }
+
+    public Date getDate() {
+        return date;
     }
 }

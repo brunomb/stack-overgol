@@ -16,10 +16,6 @@ public class MainScreenPresenter implements MainMVP.PresenterOps {
     private WeakReference<MainMVP.ViewOps> mView;
     private StackOvergolService stackOvergolService;
 
-//    private FirebaseAuth mFirebaseAuth;
-//    private FirebaseUser mFirebaseUser;
-//    private DatabaseReference mDataBase;
-
     private ServiceConnection connection = new ServiceConnection() {
 
         @Override
@@ -40,13 +36,6 @@ public class MainScreenPresenter implements MainMVP.PresenterOps {
         mView = new WeakReference<>(view);
     }
 
-//    @Override
-//    public void initFireBase() {
-//        mFirebaseAuth = FirebaseAuth.getInstance();
-//        mFirebaseUser = mFirebaseAuth.getCurrentUser();
-//        mDataBase = FirebaseDatabase.getInstance().getReference();
-//    }
-
     @Override
     public boolean bindToStackOvergolService() {
         return mView.get().doBindToStackOvergolService(connection);
@@ -55,6 +44,16 @@ public class MainScreenPresenter implements MainMVP.PresenterOps {
     @Override
     public void unbindFromStackOvergolService() {
         mView.get().doUnbindToStackOvergolService(connection);
+    }
+
+    @Override
+    public String getUsername() {
+        return stackOvergolService.getUsername();
+    }
+
+    @Override
+    public String getUserRole() {
+        return stackOvergolService.getUserRole();
     }
 
     @Override

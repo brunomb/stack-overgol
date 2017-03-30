@@ -29,4 +29,5 @@
     <string name="sog_no_acc_text">Você não possui uma conta no StackOvergol</string>
     <string name="permission_needed">Permissão Necessária</string>
     <string name="leave">Sair</string>
+    <string name="ask_permission">O StackOvergol precisa do seu ID do Telegram para verificar se você participa do grupo</string>
 </resources>
