@@ -47,6 +47,11 @@ public class MainScreenPresenter implements MainMVP.PresenterOps {
     }
 
     @Override
+    public StackOvergolService getService() {
+        return stackOvergolService;
+    }
+
+    @Override
     public String getUsername() {
         return stackOvergolService.getUsername();
     }

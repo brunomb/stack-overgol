@@ -28,7 +28,8 @@ public class MainScreenActivity extends AppCompatActivity
     private TextView tvUsername;
     private TextView tvUserRole;
 
-    final String[] fragments ={"com.github.brunomb.stackovergol.activity.matches.MatchesFragment"};
+    final String[] fragments ={"com.github.brunomb.stackovergol.activity.matches.MatchesFragment"
+                              ,"com.github.brunomb.stackovergol.activity.players.PlayersFragment"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,11 +79,11 @@ public class MainScreenActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_matches) {
-            // Handle the camera action
+            commitFragment(0);
         } else if (id == R.id.nav_finances) {
 
         } else if (id == R.id.nav_monthly) {
-
+            commitFragment(1);
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -136,5 +137,9 @@ public class MainScreenActivity extends AppCompatActivity
     @Override
     public void stackOvergolServiceDisconnected() {
         boundToStackOvergolService = false;
+    }
+
+    public StackOvergolService getService() {
+        return mPresenter.getService();
     }
 }

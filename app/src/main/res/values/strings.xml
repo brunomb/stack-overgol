@@ -23,7 +23,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="no_matches">no_matches</string>
+    <string name="no_matches">Nenhuma partida cadastrada</string>
+    <string name="no_players">Nenhum jogador cadastrada</string>
     <string name="history">History</string>
     <string name="match_of_the_week">Match of the week</string>
     <string name="sog_no_acc_text">Você não possui uma conta no StackOvergol</string>

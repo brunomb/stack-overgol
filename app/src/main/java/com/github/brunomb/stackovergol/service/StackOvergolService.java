@@ -13,12 +13,15 @@ import android.support.annotation.Nullable;
 import com.github.brunomb.stackovergol.model.StackOvergolError;
 import com.github.brunomb.stackovergol.model.User;
 import com.github.brunomb.stackovergol.utils.MyLog;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by brunomb on 3/17/2017
@@ -32,6 +35,7 @@ public class StackOvergolService extends Service {
 
     private static final int INIT_FIREBASE = 0;
     private static final int CHECK_USER_AUTH = 1;
+    private static final int GET_USERS = 2;
 
     private DatabaseReference mDatabase;
     private User mUser;
@@ -113,7 +117,6 @@ public class StackOvergolService extends Service {
         mDatabase.child("users").child(event.telegramID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-//                MyLog.i((String) dataSnapshot.child("first_name").getValue());
                 User user = dataSnapshot.getValue(User.class);
                 if (user != null) {
                     mUser = user;
@@ -126,9 +129,49 @@ public class StackOvergolService extends Service {
 
             }
         });
+    }
 
-        Query query = mDatabase.child("users").equalTo(event.getTelegramID());
-        MyLog.i(query.toString());
+    public void getUsers(StackOvergolAPI.GetUsersCallback callback) {
+        MyLog.i("---------- ----------");
+        MyLog.i("service - getUsers");
+        Message message = serviceHandler.obtainMessage(GET_USERS);
+        message.obj = new GetUsersOperation(callback);
+        serviceHandler.sendMessage(message);
+    }
+
+    public void doGetUsers(final GetUsersOperation event) {
+        MyLog.i("---------- ----------");
+        MyLog.i("service - doGetUsers");
+        final List<User> users = new ArrayList<>();
+        final StackOvergolAPI.GetUsersCallback callback = event.getCallback();
+
+        mDatabase.child("users").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                users.add(dataSnapshot.getValue(User.class));
+                callback.onSuccess(users);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private final class StackOvergolServiceHandler extends Handler {
@@ -145,6 +188,9 @@ public class StackOvergolService extends Service {
                     break;
                 case CHECK_USER_AUTH:
                     doCheckUserAuth((CheckUserAuthOperation) message.obj);
+                    break;
+                case GET_USERS:
+                    doGetUsers((GetUsersOperation) message.obj);
                     break;
                 default:
                     break;
@@ -186,6 +232,19 @@ public class StackOvergolService extends Service {
         }
 
         StackOvergolAPI.GenericCallback getCallback() {
+            return callback;
+        }
+    }
+
+    private class GetUsersOperation {
+
+        private final StackOvergolAPI.GetUsersCallback callback;
+
+        GetUsersOperation(StackOvergolAPI.GetUsersCallback callback) {
+            this.callback = callback;
+        }
+
+        StackOvergolAPI.GetUsersCallback getCallback() {
             return callback;
         }
     }

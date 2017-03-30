@@ -19,8 +19,8 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesAdapter.MatchesV
 
     private final List<Match> matchList;
 
-    public MatchesAdapter(List<Match> myDataset) {
-        this.matchList = myDataset;
+    public MatchesAdapter(List<Match> myData) {
+        this.matchList = myData;
     }
 
     @Override
