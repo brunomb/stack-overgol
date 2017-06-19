@@ -4,6 +4,8 @@ import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
+import com.github.brunomb.stackovergol.model.StackOvergolError;
+import com.github.brunomb.stackovergol.service.StackOvergolAPI;
 import com.github.brunomb.stackovergol.service.StackOvergolService;
 
 import java.lang.ref.WeakReference;
@@ -64,5 +66,20 @@ public class MainScreenPresenter implements MainMVP.PresenterOps {
     @Override
     public void setView(MainMVP.ViewOps view) {
         mView = new WeakReference<>(view);
+    }
+
+    @Override
+    public void checkUserAuth(String telegramID) {
+        stackOvergolService.checkUserAuth(telegramID, new StackOvergolAPI.GenericCallback() {
+            @Override
+            public void onSuccess() {
+//                mView.get().userAuthenticated();
+            }
+
+            @Override
+            public void onFailure(StackOvergolError error) {
+//                mView.get().userNotAuthenticated();
+            }
+        });
     }
 }

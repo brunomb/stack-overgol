@@ -5,7 +5,9 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -18,11 +20,13 @@ import android.widget.TextView;
 
 import com.github.brunomb.stackovergol.R;
 import com.github.brunomb.stackovergol.service.StackOvergolService;
+import com.github.brunomb.stackovergol.utils.MyLog;
 
 public class MainScreenActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MainMVP.ViewOps {
 
     private boolean boundToStackOvergolService = false;
+    private static final String PREF_TELEGRAM_ID = "telegram.id";
 
     private MainMVP.PresenterOps mPresenter;
     private TextView tvUsername;
@@ -35,7 +39,6 @@ public class MainScreenActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
-
         initViews();
     }
 
@@ -93,6 +96,7 @@ public class MainScreenActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
+        MyLog.i("Main Screen: " + (mPresenter == null));
         mPresenter = new MainScreenPresenter(this);
         mPresenter.bindToStackOvergolService();
     }
@@ -129,9 +133,10 @@ public class MainScreenActivity extends AppCompatActivity
 
     @Override
     public void stackOvergolServiceConnected() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String prefTelegramID = preferences.getString(PREF_TELEGRAM_ID, null);
         boundToStackOvergolService = true;
-        tvUsername.setText(mPresenter.getUsername());
-        tvUserRole.setText(mPresenter.getUserRole());
+        mPresenter.checkUserAuth(prefTelegramID);
     }
 
     @Override
@@ -140,6 +145,19 @@ public class MainScreenActivity extends AppCompatActivity
     }
 
     public StackOvergolService getService() {
+        MyLog.i("mPresenter: " + (mPresenter == null));
         return mPresenter.getService();
+    }
+
+    @Override
+    public void userAuthenticated() {
+        tvUsername.setText(mPresenter.getUsername());
+        tvUserRole.setText(mPresenter.getUserRole());
+    }
+
+    @Override
+    public void userNotAuthenticated() {
+//        isUserAuth = false;
+//        animateLogo();
     }
 }

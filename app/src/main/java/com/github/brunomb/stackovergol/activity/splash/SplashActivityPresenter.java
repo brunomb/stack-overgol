@@ -1,12 +1,9 @@
 package com.github.brunomb.stackovergol.activity.splash;
 
-import android.content.ComponentName;
-import android.content.ServiceConnection;
-import android.os.IBinder;
-
+import com.github.brunomb.stackovergol.callback.CheckUserAuthCallback;
 import com.github.brunomb.stackovergol.model.StackOvergolError;
-import com.github.brunomb.stackovergol.service.StackOvergolAPI;
-import com.github.brunomb.stackovergol.service.StackOvergolService;
+import com.github.brunomb.stackovergol.model.User;
+import com.github.brunomb.stackovergol.utils.FireBaseHelper;
 
 import java.lang.ref.WeakReference;
 
@@ -17,58 +14,17 @@ import java.lang.ref.WeakReference;
 class SplashActivityPresenter implements SplashMVP.PresenterOps {
 
     private WeakReference<SplashMVP.ViewOps> mView;
-    private StackOvergolService stackOvergolService;
-
-    private ServiceConnection connection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            StackOvergolService.ServiceBinder binder = (StackOvergolService.ServiceBinder) service;
-            stackOvergolService = binder.getService();
-            mView.get().stackOvergolServiceConnected();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName className) {
-            stackOvergolService = null;
-            mView.get().stackOvergolServiceDisconnected();
-        }
-    };
 
     SplashActivityPresenter(SplashMVP.ViewOps view) {
         mView = new WeakReference<>(view);
     }
 
     @Override
-    public boolean bindToStackOvergolService() {
-        return mView.get().doBindToStackOvergolService(connection);
-    }
-
-    @Override
-    public void unbindFromStackOvergolService() {
-        mView.get().doUnbindToStackOvergolService(connection);
-    }
-
-    @Override
-    public void initFireBase(final String telegramID) {
-        stackOvergolService.initFirebase(new StackOvergolAPI.GenericCallback() {
+    public void checkUserAuth(String telegramID) {
+        FireBaseHelper.getInstance().checkUserAuth(telegramID, new CheckUserAuthCallback() {
             @Override
-            public void onSuccess() {
-                checkUserAuth(telegramID);
-            }
-
-            @Override
-            public void onFailure(StackOvergolError error) {
-                //TODO DO THIS
-            }
-        });
-    }
-
-    private void checkUserAuth(String telegramID) {
-        stackOvergolService.checkUserAuth(telegramID, new StackOvergolAPI.GenericCallback() {
-            @Override
-            public void onSuccess() {
-                mView.get().userAuthenticated();
+            public void onSuccess(User authenticatedUser) {
+                mView.get().userAuthenticated(authenticatedUser);
             }
 
             @Override

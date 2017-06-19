@@ -5,6 +5,7 @@ package com.github.brunomb.stackovergol.model;
  */
 
 public enum StackOvergolError {
+    USER_NOT_AUTH,
     INVALID_PASSWORD,
     GENERAL_LOG_ERROR
 }

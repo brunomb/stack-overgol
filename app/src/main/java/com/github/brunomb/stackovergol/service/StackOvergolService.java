@@ -29,15 +29,15 @@ import java.util.List;
 
 public class StackOvergolService extends Service {
 
-    private final IBinder binder = new ServiceBinder();
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
-    private StackOvergolServiceHandler serviceHandler;
+    private final IBinder binder = new ServiceBinder();//
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());//
+    private StackOvergolServiceHandler serviceHandler;//
 
-    private static final int INIT_FIREBASE = 0;
-    private static final int CHECK_USER_AUTH = 1;
-    private static final int GET_USERS = 2;
+    private static final int INIT_FIREBASE = 0;//
+    private static final int CHECK_USER_AUTH = 1;//
+    private static final int GET_USERS = 2;//
 
-    private DatabaseReference mDatabase;
+    private DatabaseReference mDatabase;//
     private User mUser;
 
     @Nullable
@@ -45,6 +45,9 @@ public class StackOvergolService extends Service {
     public IBinder onBind(Intent intent) {
         MyLog.i("---------- ----------");
         MyLog.i("SOG - service - onBind");
+        if (mDatabase == null) {
+            initFirebase(null);
+        }
         return binder;
     }
 
@@ -86,7 +89,9 @@ public class StackOvergolService extends Service {
                 @Override
                 public void run() {
                     //TODO SET MESSAGE
-                    callback.onFailure(StackOvergolError.GENERAL_LOG_ERROR);
+                    if (callback != null) {
+                        callback.onFailure(StackOvergolError.GENERAL_LOG_ERROR);
+                    }
                 }
             });
         }
@@ -95,7 +100,9 @@ public class StackOvergolService extends Service {
             mainHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    callback.onSuccess();
+                    if (callback != null) {
+                        callback.onSuccess();
+                    }
                 }
             });
         }
@@ -113,7 +120,7 @@ public class StackOvergolService extends Service {
         MyLog.i("---------- ----------");
         MyLog.i("service - doCheckUserAuth");
         final StackOvergolAPI.GenericCallback callback = event.getCallback();
-
+        MyLog.i("service - doCheckUserAuth database it is null?? " + (mDatabase == null));
         mDatabase.child("users").child(event.telegramID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -257,5 +264,4 @@ public class StackOvergolService extends Service {
         //TODO CHANGE THIS AFTER DB REFACTOR
         return "Admin";
     }
-
 }

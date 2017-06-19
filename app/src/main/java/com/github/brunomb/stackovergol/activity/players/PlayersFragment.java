@@ -13,6 +13,7 @@ import com.github.brunomb.stackovergol.R;
 import com.github.brunomb.stackovergol.activity.main.MainScreenActivity;
 import com.github.brunomb.stackovergol.adapter.PlayersAdapter;
 import com.github.brunomb.stackovergol.model.User;
+import com.github.brunomb.stackovergol.utils.MyLog;
 
 import java.util.List;
 
@@ -39,6 +40,8 @@ public class PlayersFragment extends Fragment implements PlayersMVP.ViewOps {
     public void onStart() {
         super.onStart();
         mPresenter = new PlayersPresenter(this);
+        MyLog.i("((MainScreenActivity) getActivity()).getService(): " + (((MainScreenActivity) getActivity()).getService() == null));
+        MyLog.i("((MainScreenActivity) getActivity()): " + (((MainScreenActivity) getActivity()) == null));
         mPresenter.setService(((MainScreenActivity) getActivity()).getService());
         mPresenter.getUsers();
     }

@@ -4,13 +4,13 @@ import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.animation.ValueAnimator;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -22,7 +22,8 @@ import android.widget.ImageView;
 import com.github.brunomb.stackovergol.R;
 import com.github.brunomb.stackovergol.activity.main.MainScreenActivity;
 import com.github.brunomb.stackovergol.activity.noAccount.NoAccountActivity;
-import com.github.brunomb.stackovergol.service.StackOvergolService;
+import com.github.brunomb.stackovergol.model.StackOvergolPreference;
+import com.github.brunomb.stackovergol.model.User;
 import com.race604.drawable.wave.WaveDrawable;
 
 import butterknife.BindView;
@@ -35,7 +36,6 @@ public class SplashActivity extends AppCompatActivity implements SplashMVP.ViewO
     private static final String TELEGRAM_ACCOUNT = "org.telegram.messenger";
 
     private SplashMVP.PresenterOps mPresenter;
-    private boolean boundToStackOvergolService = false;
     private boolean isUserAuth = false;
 
     private WaveDrawable mWaveDrawableLogo;
@@ -62,15 +62,7 @@ public class SplashActivity extends AppCompatActivity implements SplashMVP.ViewO
     protected void onStart() {
         super.onStart();
         mPresenter = new SplashActivityPresenter(this);
-        mPresenter.bindToStackOvergolService();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (boundToStackOvergolService) {
-            mPresenter.unbindFromStackOvergolService();
-        }
+        checkAccountPermission();
     }
 
     @Override
@@ -87,30 +79,8 @@ public class SplashActivity extends AppCompatActivity implements SplashMVP.ViewO
     }
 
     @Override
-    public boolean doBindToStackOvergolService(ServiceConnection connection) {
-        Intent intent = new Intent(this, StackOvergolService.class);
-        return bindService(intent, connection, Context.BIND_AUTO_CREATE);
-    }
-
-    @Override
-    public void doUnbindToStackOvergolService(ServiceConnection connection) {
-        unbindService(connection);
-        boundToStackOvergolService = false;
-    }
-
-    @Override
-    public void stackOvergolServiceConnected() {
-        boundToStackOvergolService = true;
-        checkAccountPermission();
-    }
-
-    @Override
-    public void stackOvergolServiceDisconnected() {
-        boundToStackOvergolService = false;
-    }
-
-    @Override
-    public void userAuthenticated() {
+    public void userAuthenticated(User authenticatedUser) {
+        storeUserInfo(authenticatedUser);
         isUserAuth = true;
         animateLogo();
     }
@@ -182,7 +152,16 @@ public class SplashActivity extends AppCompatActivity implements SplashMVP.ViewO
         }
 
         if (!telegramID.isEmpty()) {
-            mPresenter.initFireBase(telegramID);
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            String prefTelegramID = preferences.getString(StackOvergolPreference.TELEGRAM_ID.getPreference(), null);
+            // If I already have the telegram id, then just check at firebase
+            if (telegramID.equals(prefTelegramID)) {
+                mPresenter.checkUserAuth(telegramID);
+            } else {
+                // If I don't have or have a different one, then update and check at firebase
+                preferences.edit().putString(StackOvergolPreference.TELEGRAM_ID.getPreference(), telegramID).apply();
+                mPresenter.checkUserAuth(telegramID);
+            }
         } else {
             userNotAuthenticated();
         }
@@ -204,5 +183,13 @@ public class SplashActivity extends AppCompatActivity implements SplashMVP.ViewO
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.GET_ACCOUNTS},
                 MY_GET_ACCOUNT_PERMISSION);
+    }
+
+    private void storeUserInfo(User user) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        preferences.edit().putString(StackOvergolPreference.USER_NAME.getPreference(), user.username).apply();
+        preferences.edit().putString(StackOvergolPreference.FIRST_NAME.getPreference(), user.firstName).apply();
+        preferences.edit().putString(StackOvergolPreference.LAST_NAME.getPreference(), user.lastName).apply();
+        preferences.edit().putString(StackOvergolPreference.TYPE.getPreference(), user.type).apply();
     }
 }

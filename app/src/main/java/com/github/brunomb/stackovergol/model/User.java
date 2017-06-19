@@ -24,9 +24,7 @@ public class User {
     @PropertyName("username")
     public String username;
 
-    public User() {
-
-    }
+    public User() {}
 
     public User(Long id, String firstName, String lastName, String type, String username) {
         this.id = id;

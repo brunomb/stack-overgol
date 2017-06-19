@@ -15,6 +15,8 @@ interface MainMVP {
         void doUnbindToStackOvergolService(ServiceConnection connection);
         void stackOvergolServiceConnected();
         void stackOvergolServiceDisconnected();
+        void userAuthenticated();
+        void userNotAuthenticated();
     }
 
     interface PresenterOps {
@@ -24,5 +26,6 @@ interface MainMVP {
         String getUsername();
         String getUserRole();
         void setView(ViewOps view);
+        void checkUserAuth(String telegramID);
     }
 }
