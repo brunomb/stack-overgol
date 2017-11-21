@@ -29,7 +29,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MainActActivity"
-            android:label="@string/title_activity_main_act"
+            android:label="@string/main_tv_title"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".addGame.AddGameActivity"></activity>
     </application>

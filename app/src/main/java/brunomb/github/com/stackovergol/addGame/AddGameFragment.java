@@ -1,7 +1,10 @@
 package brunomb.github.com.stackovergol.addGame;
 
 import android.app.DatePickerDialog;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -11,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -23,23 +25,19 @@ import java.util.List;
 import java.util.Locale;
 
 import brunomb.github.com.stackovergol.R;
+import brunomb.github.com.stackovergol.data.model.Game;
 import brunomb.github.com.stackovergol.data.model.GameType;
 
 public class AddGameFragment extends Fragment {
 
+    private AddGameViewModel viewModel;
     private Button dateButton;
-    private static AddGameContract.Presenter addGamePresenter;
-    private Button saveButton;
     private EditText nameEditText;
     private Spinner durationSpinner;
     private Spinner typeSpinner;
     private DatePickerDialog gameDatePicker;
-    private Date gameDate;
-    private GameType gameType;
-    private Integer duration;
 
-    public static AddGameFragment newInstance(AddGamerPresenter presenter) {
-        addGamePresenter = presenter;
+    public static AddGameFragment newInstance() {
         return new AddGameFragment();
     }
 
@@ -50,6 +48,23 @@ public class AddGameFragment extends Fragment {
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        viewModel = ViewModelProviders.of(getActivity()).get(AddGameViewModel.class);
+
+        final Observer<Game> gameObserver = game -> {
+            if (game != null) {
+                setupName(game.getName());
+                setupDatePicker(game.getDate());
+                setupTypeSpinner(game.getType());
+                setupDurationSpinner(game.getDuration());
+            }
+        };
+
+        viewModel.getGame().observe(this, gameObserver);
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -57,61 +72,41 @@ public class AddGameFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.add_game_frag, container, false);
         nameEditText = root.findViewById(R.id.et_add_game_name);
-        nameEditText.setText("Stack OverGol");
         dateButton = root.findViewById(R.id.bt_add_game_date);
         typeSpinner = root.findViewById(R.id.sp_add_game_type);
         durationSpinner = root.findViewById(R.id.sp_add_game_duration);
-        saveButton = root.findViewById(R.id.bt_add_game_save);
-        setupDatePicker();
-        setupTypeSpinner();
-        setupDurationSpinner();
-
-        addGamePresenter.showPlayers();
         return root;
     }
 
-//    private void setupSaveButton() {
-//        final String name = nameEditText.getText().toString();
-//        saveButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                mPresenter.saveGame(name, gameDate, duration, gameType);
-//            }
-//        });
-//    }
-
-    public void setupDatePicker() {
-        Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int date = calendar.get(Calendar.DATE);
-        gameDate = calendar.getTime();
-        SimpleDateFormat format = new SimpleDateFormat("E, dd MMM yyyy", Locale.ENGLISH);
-        dateButton.setText(format.format(calendar.getTime()));
-
-        gameDatePicker = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-                Calendar cal = Calendar.getInstance();
-                cal.set(i, i1, i2);
-                gameDate = cal.getTime();
-                SimpleDateFormat format = new SimpleDateFormat("E, dd MMM yyyy", Locale.ENGLISH);
-                dateButton.setText(format.format(gameDate.getTime()));
-            }
-        }, year, month, date);
-
-        dateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                gameDatePicker.show();
-            }
-        });
+    private void setupName(String name) {
+        if (nameEditText != null) {
+            nameEditText.setText(name);
+        }
     }
 
-    private void setupTypeSpinner() {
+    public void setupDatePicker(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int tempDate = cal.get(Calendar.DATE);
+        SimpleDateFormat format = new SimpleDateFormat("E, dd MMM yyyy", Locale.ENGLISH);
+        dateButton.setText(format.format(date.getTime()));
+
+        gameDatePicker = new DatePickerDialog(getContext(), (datePicker, i, i1, i2) -> {
+            cal.set(i, i1, i2);
+            // TODO UPDATE HERE
+//            gameDate = cal.getTime();
+            SimpleDateFormat format1 = new SimpleDateFormat("E, dd MMM yyyy", Locale.ENGLISH);
+            dateButton.setText(format1.format(cal.getTime()));
+        }, year, month, tempDate);
+
+        dateButton.setOnClickListener(view -> gameDatePicker.show());
+    }
+
+    private void setupTypeSpinner(GameType type) {
         List<String> list = new ArrayList<>();
         list.add("Championship");
         list.add("Elimination");
@@ -119,18 +114,22 @@ public class AddGameFragment extends Fragment {
                 android.R.layout.simple_spinner_item, list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         typeSpinner.setAdapter(dataAdapter);
-        typeSpinner.setSelection(0);
-        gameType = GameType.CHAMPIONSHIP;
+        switch (type) {
+            case CHAMPIONSHIP:
+                typeSpinner.setSelection(0);
+                break;
+            case ELIMINATION:
+                typeSpinner.setSelection(1);
+                break;
+        }
 
         typeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 switch (i) {
                     case 0:
-                        gameType = GameType.CHAMPIONSHIP;
                         break;
                     case 1:
-                        gameType = GameType.ELIMINATION;
                         break;
                     default:
                         break;
@@ -144,7 +143,7 @@ public class AddGameFragment extends Fragment {
         });
     }
 
-    private void setupDurationSpinner() {
+    private void setupDurationSpinner(int duration) {
         List<String> list = new ArrayList<>();
         list.add("7 min");
         list.add("8 min");
@@ -159,13 +158,12 @@ public class AddGameFragment extends Fragment {
                 android.R.layout.simple_spinner_item, list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         durationSpinner.setAdapter(dataAdapter);
-        durationSpinner.setSelection(1);
-        duration = 8;
+        durationSpinner.setSelection(duration - 7);
 
         durationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                duration = i + 7;
+
             }
 
             @Override

@@ -24,8 +24,8 @@ public class GameTest {
         Date dateA = cal.getTime();
         cal.set(2017, 5, 30);
         Date dateB = cal.getTime();
-        gameChampionShip = new Game("Game A", dateA, GameType.CHAMPIONSHIP);
-        gameElimination = new Game("Game B", dateB, GameType.ELIMINATION);
+        gameChampionShip = new Game("Game A", dateA, GameType.CHAMPIONSHIP, 8);
+        gameElimination = new Game("Game B", dateB, GameType.ELIMINATION, 8);
     }
 
     @Test

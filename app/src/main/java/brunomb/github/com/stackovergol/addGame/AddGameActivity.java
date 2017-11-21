@@ -3,15 +3,13 @@ package brunomb.github.com.stackovergol.addGame;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.Button;
 
 import brunomb.github.com.stackovergol.R;
 import brunomb.github.com.stackovergol.util.ActivityUtils;
 
-public class AddGameActivity extends AppCompatActivity implements AddGameContract.View {
+public class AddGameActivity extends AppCompatActivity {
 
-    private AddGameContract.Presenter mPresenter;
     private Button nextButton;
     private Button previousButton;
     private AddGameFragment addGameFragment;
@@ -34,32 +32,21 @@ public class AddGameActivity extends AppCompatActivity implements AddGameContrac
         nextButton = findViewById(R.id.bt_add_game_next);
         previousButton = findViewById(R.id.bt_add_game_cancel);
 
-        previousButton.setText("Cancel");
+        previousButton.setText(R.string.add_game_bt_cancel);
+        nextButton.setText(R.string.add_game_bt_next);
 
         if (addGameFragment == null) {
-            addGameFragment = AddGameFragment.newInstance((AddGamerPresenter) mPresenter);
+            addGameFragment = AddGameFragment.newInstance();
 
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), addGameFragment,
                     R.id.add_game_frag);
         }
 
-        new AddGamerPresenter(this);
-
         actualState = ADD_GAME;
 
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                nextFragment();
-            }
-        });
+        nextButton.setOnClickListener(view -> nextFragment());
 
-        previousButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                previousFragment();
-            }
-        });
+        previousButton.setOnClickListener(view -> previousFragment());
     }
 
     public void nextFragment() {
@@ -72,7 +59,7 @@ public class AddGameActivity extends AppCompatActivity implements AddGameContrac
                 ft.replace(R.id.add_game_frag, teamRedFragment, "fragment");
                 // Start the animated transition.
                 ft.commit();
-                previousButton.setText("Previous");
+                previousButton.setText(R.string.add_game_bt_previous);
                 break;
             case RED_TEAM:
                 actualState = BLUE_TEAM;
@@ -97,7 +84,7 @@ public class AddGameActivity extends AppCompatActivity implements AddGameContrac
                 ft.replace(R.id.add_game_frag, teamGreenFragment, "fragment");
                 // Start the animated transition.
                 ft.commit();
-                nextButton.setText("Finish");
+                nextButton.setText(R.string.add_game_bt_finish);
                 break;
             case GREEN_TEAM:
                 break;
@@ -113,12 +100,12 @@ public class AddGameActivity extends AppCompatActivity implements AddGameContrac
                 super.onBackPressed();
             case RED_TEAM:
                 actualState = ADD_GAME;
-                addGameFragment = AddGameFragment.newInstance((AddGamerPresenter) mPresenter);
+                addGameFragment = AddGameFragment.newInstance();
                 // ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
                 ft.replace(R.id.add_game_frag, addGameFragment, "fragment");
                 // Start the animated transition.
                 ft.commit();
-                previousButton.setText("Cancel");
+                previousButton.setText(R.string.add_game_bt_cancel);
                 break;
             case BLUE_TEAM:
                 actualState = RED_TEAM;
@@ -143,6 +130,7 @@ public class AddGameActivity extends AppCompatActivity implements AddGameContrac
                 ft.replace(R.id.add_game_frag, teamWhiteFragment, "fragment");
                 // Start the animated transition.
                 ft.commit();
+                nextButton.setText(R.string.add_game_bt_next);
                 break;
             default:
                 break;
@@ -150,23 +138,7 @@ public class AddGameActivity extends AppCompatActivity implements AddGameContrac
     }
 
     @Override
-    public void showSaveSuccess() {
-
-    }
-
-    @Override
-    public void showSaveFailure() {
-
-    }
-
-    @Override
-    public void setPresenter(AddGameContract.Presenter presenter) {
-        mPresenter = presenter;
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
-        mPresenter.start();
     }
 }

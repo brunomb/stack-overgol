@@ -24,7 +24,6 @@ public class GamesFragment extends Fragment {
     private GamesViewModel viewModel;
     private RecyclerView gamesRecyclerView;
     private GameAdapter gamesAdapter;
-//    private GamesContract.Presenter mPresenter;
 
     public static GamesFragment newInstance() {
         return new GamesFragment();

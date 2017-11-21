@@ -16,8 +16,8 @@ public class DatabaseHelper {
         Date dateA = cal.getTime();
         cal.set(2017, 5, 30);
         Date dateB = cal.getTime();
-        Game gameChampionShip = new Game("Game A", dateA, GameType.CHAMPIONSHIP);
-        Game gameElimination = new Game("Game B", dateB, GameType.ELIMINATION);
+        Game gameChampionShip = new Game("Game A", dateA, GameType.CHAMPIONSHIP, 8);
+        Game gameElimination = new Game("Game B", dateB, GameType.ELIMINATION, 8);
         gamesMock.add(gameChampionShip);
         gamesMock.add(gameElimination);
         return gamesMock;

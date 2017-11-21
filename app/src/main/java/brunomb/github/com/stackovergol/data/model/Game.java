@@ -4,30 +4,23 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-import io.realm.annotations.Required;
+public class Game {
 
-public class Game extends RealmObject {
-
-    @Required
     private String name;
 
-    @Required
     private Date date;
 
-    @PrimaryKey
     private String gameId;
 
-    @Required
     private String typeValue;
 
-    public Game() {}
+    private int duration;
 
-    public Game(String name, Date date, GameType type) {
+    public Game(String name, Date date, GameType type, int duration) {
         this.name = name;
         this.date = date;
         this.typeValue = type.getValue();
+        this.duration = duration;
         generateId();
     }
 
@@ -41,6 +34,14 @@ public class Game extends RealmObject {
 
     public GameType getType() {
         return GameType.getType(typeValue);
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public int getDuration() {
+        return duration;
     }
 
     public String getDateString() {
