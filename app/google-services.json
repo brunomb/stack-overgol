@@ -8,12 +8,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:535850414864:android:f58c2e870f529aa6",
+        "mobilesdk_app_id": "1:535850414864:android:df41f776cf40e90f",
         "android_client_info": {
-          "package_name": "com.github.brunomb.stackovergol"
+          "package_name": "brunomb.github.com.stackovergol"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "535850414864-k2ej9djt868g1a8j2f4ntjvrvfeqrsd5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "brunomb.github.com.stackovergol",
+            "certificate_hash": "b8f1cc5fef0c1fdabe2af5c69b4bb61a740da671"
+          }
+        },
         {
           "client_id": "535850414864-elg5bfib65l406j5abrtt3fhbgtgsn5c.apps.googleusercontent.com",
           "client_type": 3
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "535850414864-elg5bfib65l406j5abrtt3fhbgtgsn5c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2

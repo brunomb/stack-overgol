@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="brunomb.github.com.stackovergol.MainActActivity"
+    tools:showIn="@layout/main_app_bar">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="1">
+
+        <FrameLayout
+            android:id="@+id/add_game_frag"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.85"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:weightSum="1"
+            android:layout_weight="0.15">
+
+            <Button
+                android:id="@+id/bt_add_game_cancel"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@color/progress_hint"
+                android:layout_weight="0.5"
+                android:text="Next"/>
+
+            <Button
+                android:id="@+id/bt_add_game_next"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@color/progress_hint"
+                android:layout_weight="0.5"
+                android:text="Cancel"/>
+        </LinearLayout>
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>
