@@ -13,7 +13,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import brunomb.github.com.stackovergol.games.GamesFragment;
-import brunomb.github.com.stackovergol.games.GamesPresenter;
 import brunomb.github.com.stackovergol.users.UsersFragment;
 import brunomb.github.com.stackovergol.util.ActivityUtils;
 import brunomb.github.com.stackovergol.util.SOGLog;
@@ -85,7 +84,6 @@ public class MainActActivity extends AppCompatActivity
             case R.id.nav_camera:
                 SOGLog.i("NAC CAM");
                 fragment = GamesFragment.newInstance();
-                new GamesPresenter((GamesFragment) fragment);
                 break;
             case R.id.nav_gallery:
                 SOGLog.i("NAC GAL");
