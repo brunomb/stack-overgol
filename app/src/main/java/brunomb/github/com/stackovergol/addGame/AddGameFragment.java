@@ -27,9 +27,11 @@ import java.util.Locale;
 import brunomb.github.com.stackovergol.R;
 import brunomb.github.com.stackovergol.data.model.Game;
 import brunomb.github.com.stackovergol.data.model.GameType;
+import brunomb.github.com.stackovergol.data.model.Team;
 
 public class AddGameFragment extends Fragment {
 
+    private ArrayList<Team> mTeams;
     private AddGameViewModel viewModel;
     private Button dateButton;
     private EditText nameEditText;
@@ -61,7 +63,12 @@ public class AddGameFragment extends Fragment {
             }
         };
 
+        final Observer<ArrayList<Team>> teamsObserver = teams -> {
+            mTeams = teams;
+        };
+
         viewModel.getGame().observe(this, gameObserver);
+        viewModel.getTeams().observe(this, teamsObserver);
     }
 
     @Override

@@ -1,9 +1,8 @@
 package brunomb.github.com.stackovergol.data.model;
 
-import io.realm.RealmObject;
 import io.realm.annotations.Required;
 
-public class Player extends RealmObject {
+public class Player {
 
     @Required
     private String name;

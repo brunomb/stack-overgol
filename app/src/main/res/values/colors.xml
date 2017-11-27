@@ -9,4 +9,9 @@
     <color name="progress_hint">#f38027</color>
     <color name="disabled">#875d3c</color>
     <color name="black">#000000</color>
+    <color name="team_red">#cd6f6a</color>
+    <color name="team_green">#6ccd6a</color>
+    <color name="team_blue">#6acdcd</color>
+    <color name="team_white">#e2e2e2</color>
+
 </resources>
