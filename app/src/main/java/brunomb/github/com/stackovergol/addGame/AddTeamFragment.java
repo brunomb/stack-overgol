@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import brunomb.github.com.stackovergol.R;
@@ -24,6 +25,7 @@ public class AddTeamFragment extends Fragment {
     private TextView title;
     private ImageView color;
     private LinearLayout nameBg;
+    private ListView playersListView;
 
     public AddTeamFragment() {}
 
@@ -51,7 +53,9 @@ public class AddTeamFragment extends Fragment {
         title = root.findViewById(R.id.tv_add_team_name);
 //        color = root.findViewById(R.id.iv_add_team_color);
         nameBg = root.findViewById(R.id.ll_add_team_name_bg);
+        playersListView = root.findViewById(R.id.lv_add_team_players);
         viewModel = ViewModelProviders.of(getActivity()).get(AddGameViewModel.class);
+
         viewModel.getTeams().observe(this, teams -> {
             switch (teamColor) {
                 case RED:
@@ -73,6 +77,9 @@ public class AddTeamFragment extends Fragment {
     }
 
     public void prepareView() {
+        AddGamePlayerAdapter adapter = new AddGamePlayerAdapter(team.getPlayers());
+        playersListView.setAdapter(adapter);
+
         title.setText(team.getName());
         switch (team.getColor()) {
             case RED:
