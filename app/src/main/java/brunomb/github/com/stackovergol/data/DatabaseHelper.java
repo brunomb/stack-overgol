@@ -72,4 +72,13 @@ public class DatabaseHelper {
         return  teamsMock;
     }
 
+    public static Game addGame(final AppDataBase db, Game game) {
+        db.gameDao().insert(game);
+        return game;
+    }
+
+    public static Game[] loadAllGames(final AppDataBase db) {
+        return db.gameDao().loadAllGames();
+    }
+
 }

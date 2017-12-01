@@ -1,20 +1,36 @@
 package brunomb.github.com.stackovergol.data.model;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+@Entity(tableName = "games")
 public class Game {
 
-    private String name;
-
-    private Date date;
-
+    @PrimaryKey
+    @ColumnInfo(name = "id")
+    @NonNull
     private String gameId;
 
+    @ColumnInfo(name = "name")
+    private String name;
+
+    @Ignore
+    private Date date;
+
+    @ColumnInfo(name = "type")
     private String typeValue;
 
+    @ColumnInfo(name = "default_duration")
     private int duration;
+
+    public Game() {}
 
     public Game(String name, Date date, GameType type, int duration) {
         this.name = name;
@@ -73,5 +89,21 @@ public class Game {
 
     public void setType(GameType type) {
         this.typeValue = type.getValue();
+    }
+
+    public String getTypeValue() {
+        return typeValue;
+    }
+
+    public void setGameId(String gameId) {
+        this.gameId = gameId;
+    }
+
+    public void setTypeValue(String typeValue) {
+        this.typeValue = typeValue;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }
