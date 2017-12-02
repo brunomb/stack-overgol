@@ -7,14 +7,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import brunomb.github.com.stackovergol.R;
 import brunomb.github.com.stackovergol.data.model.Game;
 
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
 
-    private ArrayList<Game> mGameDataset;
+    private Game[] mGameDataset;
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView mGameNameTextView;
@@ -31,7 +29,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
         }
     }
 
-    GameAdapter(ArrayList<Game> gameDataset) {
+    GameAdapter(Game[] gameDataset) {
         mGameDataset = gameDataset;
     }
 
@@ -45,10 +43,10 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.mGameNameTextView.setText(mGameDataset.get(position).getName());
+        holder.mGameNameTextView.setText(mGameDataset[position].getName());
         holder.mGameDateTextView.setText("10/11/2017");
-        holder.mGameTypeTextView.setText(mGameDataset.get(position).getType().getValue());
-        switch (mGameDataset.get(position).getType()) {
+        holder.mGameTypeTextView.setText(mGameDataset[position].getType().getValue());
+        switch (mGameDataset[position].getType()) {
             case ELIMINATION:
                 holder.mGameTypeImageVIew.setImageResource(R.mipmap.elimination_icon);
                 break;
@@ -60,6 +58,6 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mGameDataset.size();
+        return mGameDataset.length;
     }
 }

@@ -4,16 +4,15 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import java.util.ArrayList;
+import android.widget.LinearLayout;
 
 import brunomb.github.com.stackovergol.R;
 import brunomb.github.com.stackovergol.addGame.AddGameActivity;
@@ -24,6 +23,7 @@ public class GamesFragment extends Fragment {
     private GamesViewModel viewModel;
     private RecyclerView gamesRecyclerView;
     private GameAdapter gamesAdapter;
+    private LinearLayout emptyGamesMessage;
 
     public static GamesFragment newInstance() {
         return new GamesFragment();
@@ -35,22 +35,27 @@ public class GamesFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.games_frag, container, false);
 
         viewModel = ViewModelProviders.of(this).get(GamesViewModel.class);
 
         gamesRecyclerView = root.findViewById(R.id.games_rv);
+        emptyGamesMessage = root.findViewById(R.id.ll_games_empty_games);
         gamesRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         gamesRecyclerView.setLayoutManager(mLayoutManager);
 
-        final Observer<ArrayList<Game>> gamesObserver = games -> {
-            if (games != null && !games.isEmpty()) {
-                Log.i("brunomb", "UPDATED!");
+        final Observer<Game[]> gamesObserver = games -> {
+            if (games != null && games.length > 0) {
+                gamesRecyclerView.setVisibility(View.VISIBLE);
+                emptyGamesMessage.setVisibility(View.INVISIBLE);
                 gamesAdapter = new GameAdapter(games);
                 gamesRecyclerView.setAdapter(gamesAdapter);
+            } else {
+                gamesRecyclerView.setVisibility(View.INVISIBLE);
+                emptyGamesMessage.setVisibility(View.VISIBLE);
             }
         };
 
