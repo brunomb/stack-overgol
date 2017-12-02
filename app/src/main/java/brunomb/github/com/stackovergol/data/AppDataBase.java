@@ -3,12 +3,14 @@ package brunomb.github.com.stackovergol.data;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
 import brunomb.github.com.stackovergol.data.dao.GameDao;
 import brunomb.github.com.stackovergol.data.model.Game;
 
 @Database(entities = {Game.class}, version = 1)
+@TypeConverters({Converters.class})
 public abstract class AppDataBase extends RoomDatabase {
 
     private static AppDataBase INSTANCE;
