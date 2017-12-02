@@ -14,7 +14,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import brunomb.github.com.stackovergol.data.AppDataBase;
-import brunomb.github.com.stackovergol.data.DatabaseHelper;
 import brunomb.github.com.stackovergol.data.model.Game;
 import brunomb.github.com.stackovergol.data.model.GameType;
 
@@ -59,16 +58,58 @@ public class GameDaoTest {
 
     @Test
     public void shouldInsertGame() {
-        Game[] games = null;
-        games = DatabaseHelper.loadAllGames(appDataBase);
+        Game[] games;
+
+        games = appDataBase.gameDao().loadAllGames();
         assertEquals(0, games.length);
 
-        DatabaseHelper.addGame(appDataBase, gameChampionShip);
-        DatabaseHelper.addGame(appDataBase, gameElimination);
+        appDataBase.gameDao().insert(gameChampionShip);
+        appDataBase.gameDao().insert(gameElimination);
 
-        games = DatabaseHelper.loadAllGames(appDataBase);
+        games = appDataBase.gameDao().loadAllGames();
         assertEquals(2, games.length);
 
         assertEquals("Game A", games[0].getName());
+    }
+
+    @Test
+    public void shouldInsertAllGames() {
+        Game[] games;
+        games = appDataBase.gameDao().loadAllGames();
+        assertEquals(0, games.length);
+
+        appDataBase.gameDao().insertAll(gameChampionShip, gameElimination);
+
+        games = appDataBase.gameDao().loadAllGames();
+        assertEquals(2, games.length);
+    }
+
+    @Test
+    public void shouldDeleteGame() {
+        Game[] games;
+        appDataBase.gameDao().insert(gameChampionShip);
+
+        games = appDataBase.gameDao().loadAllGames();
+        assertEquals(1, games.length);
+
+        appDataBase.gameDao().delete(gameChampionShip);
+
+        games = appDataBase.gameDao().loadAllGames();
+        assertEquals(0, games.length);
+    }
+
+    @Test
+    public void shouldDeleteAllGames() {
+        Game[] games;
+
+        appDataBase.gameDao().insertAll(gameChampionShip, gameElimination);
+
+        games = appDataBase.gameDao().loadAllGames();
+        assertEquals(2, games.length);
+
+        appDataBase.gameDao().deleteAll(gameChampionShip, gameElimination);
+
+        games = appDataBase.gameDao().loadAllGames();
+        assertEquals(0, games.length);
     }
 }
