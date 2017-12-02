@@ -1,5 +1,6 @@
 package brunomb.github.com.stackovergol.data.dao;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -30,5 +31,11 @@ public interface GameDao {
     void deleteAll(Game... games);
 
     @Query("SELECT * FROM games")
+    LiveData<Game[]> loadAllGamesData();
+
+    @Query("SELECT * FROM games")
     Game[] loadAllGames();
+
+    @Query("SELECT * FROM games WHERE id == :gameId")
+    Game getGame(String gameId);
 }

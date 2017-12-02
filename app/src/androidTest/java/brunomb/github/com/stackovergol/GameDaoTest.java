@@ -73,6 +73,55 @@ public class GameDaoTest {
     }
 
     @Test
+    public void shouldGetGame() {
+        appDataBase.gameDao().insert(gameChampionShip);
+
+        Game testGame = appDataBase.gameDao().getGame(gameChampionShip.getGameId());
+        assertNotNull(testGame);
+        assertEquals("Game A", testGame.getName());
+    }
+
+    @Test
+    public void shouldUpdateGame() {
+        appDataBase.gameDao().insert(gameChampionShip);
+        Game testGame;
+        testGame = appDataBase.gameDao().getGame(gameChampionShip.getGameId());
+
+        assertEquals("Game A", testGame.getName());
+
+        testGame.setName("New name");
+        appDataBase.gameDao().update(testGame);
+
+        testGame = appDataBase.gameDao().getGame(gameChampionShip.getGameId());
+        assertEquals("New name", testGame.getName());
+    }
+
+    @Test
+    public void shouldUpdateAllGames() {
+        appDataBase.gameDao().insert(gameChampionShip);
+        appDataBase.gameDao().insert(gameElimination);
+        Game testGame1;
+        Game testGame2;
+
+        testGame1 = appDataBase.gameDao().getGame(gameChampionShip.getGameId());
+        testGame2 = appDataBase.gameDao().getGame(gameElimination.getGameId());
+
+        assertEquals("Game A", testGame1.getName());
+        assertEquals("Game B", testGame2.getName());
+
+        testGame1.setName("New name 1");
+        testGame2.setName("New name 2");
+
+        appDataBase.gameDao().updateAll(testGame1, testGame2);
+
+        testGame1 = appDataBase.gameDao().getGame(gameChampionShip.getGameId());
+        testGame2 = appDataBase.gameDao().getGame(gameElimination.getGameId());
+
+        assertEquals("New name 1", testGame1.getName());
+        assertEquals("New name 2", testGame2.getName());
+    }
+
+    @Test
     public void shouldInsertAllGames() {
         Game[] games;
         games = appDataBase.gameDao().loadAllGames();

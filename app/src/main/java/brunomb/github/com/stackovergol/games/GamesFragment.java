@@ -20,7 +20,6 @@ import brunomb.github.com.stackovergol.data.model.Game;
 
 public class GamesFragment extends Fragment {
 
-    private GamesViewModel viewModel;
     private RecyclerView gamesRecyclerView;
     private GameAdapter gamesAdapter;
     private LinearLayout emptyGamesMessage;
@@ -39,7 +38,7 @@ public class GamesFragment extends Fragment {
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.games_frag, container, false);
 
-        viewModel = ViewModelProviders.of(this).get(GamesViewModel.class);
+        GamesViewModel viewModel = ViewModelProviders.of(this).get(GamesViewModel.class);
 
         gamesRecyclerView = root.findViewById(R.id.games_rv);
         emptyGamesMessage = root.findViewById(R.id.ll_games_empty_games);

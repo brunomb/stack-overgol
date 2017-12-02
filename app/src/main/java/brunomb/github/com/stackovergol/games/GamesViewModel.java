@@ -1,46 +1,39 @@
 package brunomb.github.com.stackovergol.games;
 
-import android.annotation.SuppressLint;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.MutableLiveData;
-import android.os.AsyncTask;
+import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
 import brunomb.github.com.stackovergol.data.AppDataBase;
 import brunomb.github.com.stackovergol.data.model.Game;
 
 public class GamesViewModel extends AndroidViewModel {
-    private MutableLiveData<Game[]> games;
-
-    private AppDataBase appDataBase;
+    private LiveData<Game[]> games;
 
     public GamesViewModel(@NonNull Application application) {
         super(application);
 
-        appDataBase = AppDataBase.getAppDatabase(this.getApplication());
+        AppDataBase appDataBase = AppDataBase.getAppDatabase(this.getApplication());
+        games = appDataBase.gameDao().loadAllGamesData();
     }
 
-    MutableLiveData<Game[]> getGames() {
-        if (games == null) {
-            games = new MutableLiveData<>();
-            loadData();
-        }
-
+    LiveData<Game[]> getGames() {
         return games;
     }
-
-    @SuppressLint("StaticFieldLeak")
-    private void loadData() {
-        new AsyncTask<Void, Void, Game[]>() {
-            @Override
-            protected Game[] doInBackground(Void... params) {
-                return appDataBase.gameDao().loadAllGames();
-            }
-            @Override
-            protected void onPostExecute(Game[] data) {
-                games.setValue(data);
-            }
-        }.execute();
-    }
+//    @SuppressLint("StaticFieldLeak")
+//    public void addGame(Game game) {
+//        new AsyncTask<Void, Void, Void>() {
+//            @Override
+//            protected Void doInBackground(Void... params) {
+//                appDataBase.gameDao().insert(game);
+//                return null;
+//            }
+//
+//            @Override
+//            protected void onPostExecute(Void result) {
+////                loadData();
+//            }
+//        }.execute();
+//    }
 }

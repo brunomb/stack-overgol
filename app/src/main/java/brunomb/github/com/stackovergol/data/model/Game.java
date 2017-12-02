@@ -44,6 +44,7 @@ public class Game {
         return name;
     }
 
+    @NonNull
     public String getGameId() {
         return gameId;
     }
@@ -95,7 +96,7 @@ public class Game {
         return typeValue;
     }
 
-    public void setGameId(String gameId) {
+    public void setGameId(@NonNull String gameId) {
         this.gameId = gameId;
     }
 
