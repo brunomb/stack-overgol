@@ -10,8 +10,10 @@ import android.widget.Button;
 import java.util.ArrayList;
 
 import brunomb.github.com.stackovergol.R;
+import brunomb.github.com.stackovergol.data.model.Game;
 import brunomb.github.com.stackovergol.data.model.Team;
 import brunomb.github.com.stackovergol.util.ActivityUtils;
+import brunomb.github.com.stackovergol.util.SOGLog;
 
 public class AddGameActivity extends AppCompatActivity {
 
@@ -51,6 +53,14 @@ public class AddGameActivity extends AppCompatActivity {
 
         final Observer<ArrayList<Team>> teamsObserver = teams -> {
             mTeams = teams;
+        };
+
+        final Observer<Game> gameObserver = game -> {
+            if (game != null) {
+                SOGLog.v("---------------");
+                SOGLog.v("Observing: " + game.getName());
+                SOGLog.v("---------------");
+            }
         };
 
         viewModel.getTeams().observe(this, teamsObserver);
@@ -121,13 +131,19 @@ public class AddGameActivity extends AppCompatActivity {
         // Start the animated transition.
         ft.commit();
         previousButton.setText(R.string.add_game_bt_cancel);
-        previousButton.setText(R.string.add_game_bt_next);
+        nextButton.setText(R.string.add_game_bt_next);
     }
 
     public void nextFragment() {
         switch (actualState) {
             case ADD_GAME:
-                teamRedState();
+                if (viewModel.itsGameValid) {
+                    teamRedState();
+                } else {
+                    SOGLog.v("---------------");
+                    SOGLog.v("Game already exists");
+                    SOGLog.v("---------------");
+                }
                 break;
             case RED_TEAM:
                 teamBlueState();

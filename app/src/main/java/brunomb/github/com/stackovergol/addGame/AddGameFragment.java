@@ -6,6 +6,8 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -90,6 +92,22 @@ public class AddGameFragment extends Fragment {
     private void setupName(String name) {
         if (nameEditText != null) {
             nameEditText.setText(name);
+            nameEditText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+                    viewModel.setName(editable.toString());
+                }
+            });
         }
     }
 
@@ -104,8 +122,8 @@ public class AddGameFragment extends Fragment {
 
         gameDatePicker = new DatePickerDialog(getContext(), (datePicker, i, i1, i2) -> {
             cal.set(i, i1, i2);
-            // TODO UPDATE HERE
-//            gameDate = cal.getTime();
+            viewModel.setDate(cal.getTime());
+            viewModel.checkGame();
             SimpleDateFormat format1 = new SimpleDateFormat("E, dd MMM yyyy", Locale.ENGLISH);
             dateButton.setText(format1.format(cal.getTime()));
         }, year, month, tempDate);
@@ -135,8 +153,10 @@ public class AddGameFragment extends Fragment {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 switch (i) {
                     case 0:
+                        viewModel.setType(GameType.CHAMPIONSHIP);
                         break;
                     case 1:
+                        viewModel.setType(GameType.ELIMINATION);
                         break;
                     default:
                         break;
@@ -170,7 +190,7 @@ public class AddGameFragment extends Fragment {
         durationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
+                viewModel.setDuration(i + 7);
             }
 
             @Override

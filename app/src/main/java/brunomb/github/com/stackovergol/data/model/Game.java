@@ -65,7 +65,7 @@ public class Game {
         return dateFormatter.format(date);
     }
 
-    private void generateId() {
+    public void generateId() {
         SimpleDateFormat datePrefixFormatter = new SimpleDateFormat("yyyyMMdd", Locale.ENGLISH);
         String typePrefixFormatter = "";
         switch (getType()) {

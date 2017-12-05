@@ -14,9 +14,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import brunomb.github.com.stackovergol.R;
 import brunomb.github.com.stackovergol.addGame.AddGameActivity;
 import brunomb.github.com.stackovergol.data.model.Game;
+import brunomb.github.com.stackovergol.data.model.GameType;
 
 public class GamesFragment extends Fragment {
 
@@ -62,6 +66,11 @@ public class GamesFragment extends Fragment {
 
         FloatingActionButton addGameFloatActionButton = root.findViewById(R.id.games_fab_add);
         addGameFloatActionButton.setOnClickListener(view -> {
+            Calendar cal = Calendar.getInstance();
+            cal.set(2017, 11, 6);
+            Date dateA = cal.getTime();
+            Game gameChampionShip = new Game("Game A", dateA, GameType.CHAMPIONSHIP, 8);
+            viewModel.addGame(gameChampionShip);
             Intent intent = new Intent(getContext(), AddGameActivity.class);
             startActivity(intent);
         });
