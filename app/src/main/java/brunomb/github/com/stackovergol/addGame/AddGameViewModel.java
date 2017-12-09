@@ -7,6 +7,8 @@ import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -16,13 +18,15 @@ import brunomb.github.com.stackovergol.data.DatabaseHelper;
 import brunomb.github.com.stackovergol.data.model.Game;
 import brunomb.github.com.stackovergol.data.model.GameType;
 import brunomb.github.com.stackovergol.data.model.Team;
-import brunomb.github.com.stackovergol.util.SOGLog;
+import brunomb.github.com.stackovergol.util.MessageEvent;
 
 public class AddGameViewModel extends AndroidViewModel {
+    private static final String INVALID_GAME_ID = "invalid_game_id";
+    private static final String VALID_GAME_ID = "valid_game_id";
     private MutableLiveData<Game> game;
     private MutableLiveData<ArrayList<Team>> teams;
     private AppDataBase appDataBase;
-    public Boolean itsGameValid = false;
+    Boolean itsGameValid = false;
 
     public AddGameViewModel(@NonNull Application application) {
         super(application);
@@ -54,9 +58,6 @@ public class AddGameViewModel extends AndroidViewModel {
     public void setName(String name) {
         if (game.getValue() != null) {
             game.getValue().setName(name);
-            SOGLog.v("---------------");
-            SOGLog.v("New name: " + game.getValue().getName());
-            SOGLog.v("---------------");
         }
     }
 
@@ -64,27 +65,18 @@ public class AddGameViewModel extends AndroidViewModel {
         if (game.getValue() != null) {
             game.getValue().setDate(date);
             game.getValue().generateId();
-            SOGLog.v("---------------");
-            SOGLog.v("New date: " +  game.getValue().getDateString());
-            SOGLog.v("---------------");
         }
     }
 
     public void setDuration(int duration) {
         if (game.getValue() != null) {
             game.getValue().setDuration(duration);
-            SOGLog.v("---------------");
-            SOGLog.v("New duration: " + game.getValue().getDuration());
-            SOGLog.v("---------------");
         }
     }
 
     public void setType(GameType type) {
         if (game.getValue() != null) {
             game.getValue().setType(type);
-            SOGLog.v("---------------");
-            SOGLog.v("New game type: " + game.getValue().getType().getValue());
-            SOGLog.v("---------------");
         }
     }
 
@@ -97,10 +89,12 @@ public class AddGameViewModel extends AndroidViewModel {
             }
             @Override
             protected void onPostExecute(Boolean isValid) {
-                SOGLog.v("---------------");
-                SOGLog.v("Null? " + isValid);
-                SOGLog.v("---------------");
                 itsGameValid = isValid;
+                if (!itsGameValid) {
+                    EventBus.getDefault().post(new MessageEvent(INVALID_GAME_ID));
+                } else {
+                    EventBus.getDefault().post(new MessageEvent(VALID_GAME_ID));
+                }
             }
         }.execute();
     }

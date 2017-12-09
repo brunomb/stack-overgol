@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -29,11 +30,9 @@ import java.util.Locale;
 import brunomb.github.com.stackovergol.R;
 import brunomb.github.com.stackovergol.data.model.Game;
 import brunomb.github.com.stackovergol.data.model.GameType;
-import brunomb.github.com.stackovergol.data.model.Team;
 
 public class AddGameFragment extends Fragment {
 
-    private ArrayList<Team> mTeams;
     private AddGameViewModel viewModel;
     private Button dateButton;
     private EditText nameEditText;
@@ -54,23 +53,20 @@ public class AddGameFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        viewModel = ViewModelProviders.of(getActivity()).get(AddGameViewModel.class);
+        if (getActivity() != null) {
+            viewModel = ViewModelProviders.of(getActivity()).get(AddGameViewModel.class);
 
-        final Observer<Game> gameObserver = game -> {
-            if (game != null) {
-                setupName(game.getName());
-                setupDatePicker(game.getDate());
-                setupTypeSpinner(game.getType());
-                setupDurationSpinner(game.getDuration());
-            }
-        };
+            final Observer<Game> gameObserver = game -> {
+                if (game != null) {
+                    setupName(game.getName());
+                    setupDatePicker(game.getDate());
+                    setupTypeSpinner(game.getType());
+                    setupDurationSpinner(game.getDuration());
+                }
+            };
 
-        final Observer<ArrayList<Team>> teamsObserver = teams -> {
-            mTeams = teams;
-        };
-
-        viewModel.getGame().observe(this, gameObserver);
-        viewModel.getTeams().observe(this, teamsObserver);
+            viewModel.getGame().observe(this, gameObserver);
+        }
     }
 
     @Override
@@ -79,7 +75,7 @@ public class AddGameFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.add_game_frag, container, false);
         nameEditText = root.findViewById(R.id.et_add_game_name);
@@ -120,54 +116,58 @@ public class AddGameFragment extends Fragment {
         SimpleDateFormat format = new SimpleDateFormat("E, dd MMM yyyy", Locale.ENGLISH);
         dateButton.setText(format.format(date.getTime()));
 
-        gameDatePicker = new DatePickerDialog(getContext(), (datePicker, i, i1, i2) -> {
-            cal.set(i, i1, i2);
-            viewModel.setDate(cal.getTime());
-            viewModel.checkGame();
-            SimpleDateFormat format1 = new SimpleDateFormat("E, dd MMM yyyy", Locale.ENGLISH);
-            dateButton.setText(format1.format(cal.getTime()));
-        }, year, month, tempDate);
+        if (getContext() != null) {
+            gameDatePicker = new DatePickerDialog(getContext(), (datePicker, i, i1, i2) -> {
+                cal.set(i, i1, i2);
+                viewModel.setDate(cal.getTime());
+                viewModel.checkGame();
+                SimpleDateFormat format1 = new SimpleDateFormat("E, dd MMM yyyy", Locale.ENGLISH);
+                dateButton.setText(format1.format(cal.getTime()));
+            }, year, month, tempDate);
 
-        dateButton.setOnClickListener(view -> gameDatePicker.show());
+            dateButton.setOnClickListener(view -> gameDatePicker.show());
+        }
     }
 
     private void setupTypeSpinner(GameType type) {
         List<String> list = new ArrayList<>();
         list.add("Championship");
         list.add("Elimination");
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(getContext(),
-                android.R.layout.simple_spinner_item, list);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        typeSpinner.setAdapter(dataAdapter);
-        switch (type) {
-            case CHAMPIONSHIP:
-                typeSpinner.setSelection(0);
-                break;
-            case ELIMINATION:
-                typeSpinner.setSelection(1);
-                break;
-        }
+        if (getContext() != null) {
+            ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(getContext(),
+                    android.R.layout.simple_spinner_item, list);
+            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            typeSpinner.setAdapter(dataAdapter);
+            switch (type) {
+                case CHAMPIONSHIP:
+                    typeSpinner.setSelection(0);
+                    break;
+                case ELIMINATION:
+                    typeSpinner.setSelection(1);
+                    break;
+            }
 
-        typeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                switch (i) {
-                    case 0:
-                        viewModel.setType(GameType.CHAMPIONSHIP);
-                        break;
-                    case 1:
-                        viewModel.setType(GameType.ELIMINATION);
-                        break;
-                    default:
-                        break;
+            typeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    switch (i) {
+                        case 0:
+                            viewModel.setType(GameType.CHAMPIONSHIP);
+                            break;
+                        case 1:
+                            viewModel.setType(GameType.ELIMINATION);
+                            break;
+                        default:
+                            break;
+                    }
                 }
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
 
-            }
-        });
+                }
+            });
+        }
     }
 
     private void setupDurationSpinner(int duration) {
@@ -181,20 +181,22 @@ public class AddGameFragment extends Fragment {
         list.add("13 min");
         list.add("14 min");
         list.add("15 min");
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(getContext(),
-                android.R.layout.simple_spinner_item, list);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        durationSpinner.setAdapter(dataAdapter);
-        durationSpinner.setSelection(duration - 7);
+        if (getContext() != null) {
+            ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(getContext(),
+                    android.R.layout.simple_spinner_item, list);
+            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            durationSpinner.setAdapter(dataAdapter);
+            durationSpinner.setSelection(duration - 7);
 
-        durationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                viewModel.setDuration(i + 7);
-            }
+            durationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    viewModel.setDuration(i + 7);
+                }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {}
-        });
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {}
+            });
+        }
     }
 }
