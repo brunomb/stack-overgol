@@ -17,7 +17,7 @@ public class AddGamePlayerAdapter extends BaseAdapter {
         TextView name;
         TextView score;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             name = view.findViewById(R.id.tv_add_game_player_name);
             score = view.findViewById(R.id.tv_add_game_player_score);
         }
@@ -25,7 +25,7 @@ public class AddGamePlayerAdapter extends BaseAdapter {
 
     private final ArrayList<Player> players;
 
-    public AddGamePlayerAdapter(ArrayList<Player> players) {
+    AddGamePlayerAdapter(ArrayList<Player> players) {
         this.players = players;
     }
 
@@ -61,7 +61,7 @@ public class AddGamePlayerAdapter extends BaseAdapter {
         Player player = (Player) getItem(position);
 
         viewHolder.name.setText(player.getName());
-        viewHolder.score.setText(player.getRating().toString());
+        viewHolder.score.setText(Double.toString(player.getRating()));
         return playerView;
     }
 }

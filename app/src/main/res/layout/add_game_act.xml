@@ -32,16 +32,31 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:background="@color/progress_hint"
-                android:layout_weight="0.5"
-                android:text="Next"/>
+                android:layout_weight="0.5" />
 
             <Button
                 android:id="@+id/bt_add_game_next"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:background="@color/progress_hint"
-                android:layout_weight="0.5"
-                android:text="Cancel"/>
+                android:layout_weight="0.5" />
         </LinearLayout>
     </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_add_game_progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg_dark"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        android:alpha="0.8">
+
+        <ProgressBar
+            android:id="@+id/indeterminateBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

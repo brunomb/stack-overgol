@@ -23,10 +23,11 @@ import brunomb.github.com.stackovergol.util.MessageEvent;
 public class AddGameViewModel extends AndroidViewModel {
     private static final String INVALID_GAME_ID = "invalid_game_id";
     private static final String VALID_GAME_ID = "valid_game_id";
+    private static final String GAME_AND_TEAMS_SAVED = "games_teams_saved";
     private MutableLiveData<Game> game;
     private MutableLiveData<ArrayList<Team>> teams;
     private AppDataBase appDataBase;
-    Boolean itsGameValid = false;
+    private Boolean itsGameValid = false;
 
     public AddGameViewModel(@NonNull Application application) {
         super(application);
@@ -68,7 +69,7 @@ public class AddGameViewModel extends AndroidViewModel {
         }
     }
 
-    public void setDuration(int duration) {
+    void setDuration(int duration) {
         if (game.getValue() != null) {
             game.getValue().setDuration(duration);
         }
@@ -81,11 +82,15 @@ public class AddGameViewModel extends AndroidViewModel {
     }
 
     @SuppressLint("StaticFieldLeak")
-    public void checkGame() {
+    void checkGame() {
         new AsyncTask<Void, Void, Boolean>() {
             @Override
             protected Boolean doInBackground(Void... params) {
-                return appDataBase.gameDao().getGame(game.getValue().getGameId()) == null;
+                if (game.getValue() != null) {
+                    return appDataBase.gameDao().getGame(game.getValue().getGameId()) == null;
+                } else {
+                    return null;
+                }
             }
             @Override
             protected void onPostExecute(Boolean isValid) {
@@ -95,6 +100,22 @@ public class AddGameViewModel extends AndroidViewModel {
                 } else {
                     EventBus.getDefault().post(new MessageEvent(VALID_GAME_ID));
                 }
+            }
+        }.execute();
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    void saveGamesAndTeams() {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                appDataBase.gameDao().insert(game.getValue());
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void v) {
+                EventBus.getDefault().post(new MessageEvent(GAME_AND_TEAMS_SAVED));
             }
         }.execute();
     }

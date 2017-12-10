@@ -25,4 +25,5 @@
     <string name="add_game_bt_finish">Finish</string>
     <string name="add_game_bt_next">Next</string>
     <string name="add_game_bt_previous">Previous</string>
+    <string name="add_game_invalid_game">Invalid game date</string>
 </resources>
